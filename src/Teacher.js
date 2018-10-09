@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { Button, TextInput } from "react-native-paper";
 
 export class TeacherScreen extends React.Component {
   render() {
@@ -8,16 +8,10 @@ export class TeacherScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.buttons}>
-          <Button
-            mode="contained"
-            onPress={() => navigate('CreateClass')}
-          >
+          <Button mode="contained" onPress={() => navigate("CreateClass")}>
             Create a new classroom
           </Button>
-          <Button
-            mode="contained"
-            onPress={() => navigate('ExistingClass')}
-          >
+          <Button mode="contained" onPress={() => navigate("ExistingClass")}>
             Use an existing classroom
           </Button>
         </View>
@@ -30,10 +24,10 @@ export class CreateClass extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      className: ''
+      firstName: "",
+      lastName: "",
+      email: "",
+      className: ""
     };
     this.canSubmit = false;
   }
@@ -41,7 +35,7 @@ export class CreateClass extends React.Component {
   componentWillUpdate(nextProps, nextState) {
     this.canSubmit = false;
     for (let field in nextState) {
-      if (nextState[field] == '') return;
+      if (nextState[field] == "") return;
     }
     this.canSubmit = true;
   }
@@ -79,18 +73,52 @@ export class CreateClass extends React.Component {
           <Button
             mode="contained"
             disabled={!this.canSubmit}
-            onPress={() => navigate('VoiceDemo')}
+            onPress={() => navigate("ClassCreated")}
           >
-            Voice Demo
+            Create Classroom
           </Button>
           <Button
             mode="contained"
             disabled={!this.canSubmit}
-            onPress={() => navigate('WordDemo')}
+            onPress={() => navigate("VoiceDemo")}
           >
-            Word Demo
+            Voice Demo
           </Button>
         </View>
+      </View>
+    );
+  }
+}
+
+export class ClassCreated extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      classID: Math.random()
+        .toString(36)
+        .substring(2, 6)
+        .toUpperCase()
+    };
+  }
+
+  render() {
+    const { navigate } = this.props.navigation;
+
+    return (
+      <View>
+        <Text>
+          Your classroom has been created
+        </Text>
+        <Text>
+          Your classroom ID: 
+          {this.state.classID}
+        </Text>
+        <Button
+          mode="contained"
+          onPress={() => navigate("WordDemo", { classID: this.state.classID })}
+        >
+          Go to your classroom
+        </Button>
       </View>
     );
   }
@@ -109,16 +137,16 @@ export class ExistingClass extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center"
     //justifyContent: 'center',
   },
   buttons: {
-    minWidth: '60%',
-    maxWidth: '60%'
+    minWidth: "60%",
+    maxWidth: "60%"
   },
   textboxes: {
-    minWidth: '60%',
-    maxWidth: '60%'
+    minWidth: "60%",
+    maxWidth: "60%"
   }
 });

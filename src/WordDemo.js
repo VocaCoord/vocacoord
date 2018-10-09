@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
+import { ListItem } from 'react-native-elements';
 
 export class WordDemo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            words: [
-                {key: 'test'},
-                {key: 'test2'}
+            wordBanks: [
+              {
+                name: 'Add Word Bank',
+                createdAt: null
+              }
             ]
         }
     }
@@ -15,11 +18,24 @@ export class WordDemo extends React.Component {
     render() {
         return (
             <View>
-                <FlatList
-                    data={this.state.words}
-                    renderItem={({item}) => <Text>{item.key}</Text>}
-                />
+              {
+                this.state.wordBanks.map((wordbank, i) => (
+                  <ListItem
+                    key={i}
+                    title={wordbank.name}
+                    subtitle={wordbank.createdAt ? wordbank.createdAt : ''}
+                  />
+                ))
+              }
             </View>
         )
     }
+}
+
+class WordBankListItem extends React.Component {
+  render() {
+    return (
+      <Text></Text>
+    )
+  }
 }
