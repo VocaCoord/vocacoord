@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 
 export class TeacherScreen extends React.Component {
@@ -35,9 +35,20 @@ export class CreateClass extends React.Component {
       email: '',
       className: ''
     };
+    this.canSubmit = false;
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    this.canSubmit = false;
+    for (let field in nextState) {
+      if (nextState[field] == '') return;
+    }
+    this.canSubmit = true;
   }
 
   render() {
+    const { navigate } = this.props.navigation;
+
     return (
       <View style={styles.container}>
         <View style={styles.textboxes}>
@@ -65,6 +76,20 @@ export class CreateClass extends React.Component {
             value={this.state.className}
             onChangeText={className => this.setState({ className })}
           />
+          <Button
+            mode="contained"
+            disabled={!this.canSubmit}
+            onPress={() => navigate('VoiceDemo')}
+          >
+            Voice Demo
+          </Button>
+          <Button
+            mode="contained"
+            disabled={!this.canSubmit}
+            onPress={() => navigate('WordDemo')}
+          >
+            Word Demo
+          </Button>
         </View>
       </View>
     );
@@ -86,7 +111,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    //justifyContent: 'center',
   },
   buttons: {
     minWidth: '60%',

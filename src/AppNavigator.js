@@ -1,8 +1,11 @@
 import { createStackNavigator } from 'react-navigation';
 import { HomeScreen } from './Home.js';
 import { TeacherScreen, CreateClass, ExistingClass } from './Teacher.js';
-import { StudentScreen } from './Student.js'
+import { VoiceDemo } from './VoiceDemo.js';
+import { StudentScreen } from './Student.js';
+import { WordDemo } from './WordDemo.js';
 
+/* nested structure below represents the nested structure of components */
 export default AppNavigator = createStackNavigator(
   {
     HomeScreen: {
@@ -12,11 +15,13 @@ export default AppNavigator = createStackNavigator(
       }
     },
 
-    TeacherScreen,
-    CreateClass,
-    ExistingClass,
+      TeacherScreen,
+        CreateClass,
+          VoiceDemo,
+          WordDemo,
+        ExistingClass,
     
-    StudentScreen,
+      StudentScreen,
   },
   {
     initialRouteName: 'HomeScreen'
