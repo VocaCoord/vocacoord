@@ -29,11 +29,11 @@ export class CreateClass extends React.Component {
       email: "",
       className: ""
     };
-    this.canSubmit = false;
+    this.canSubmit = true; //for testing, should be false in production
   }
 
   componentWillUpdate(nextProps, nextState) {
-    this.canSubmit = false;
+    this.canSubmit = true; //for testing, should be false in production
     for (let field in nextState) {
       if (nextState[field] == "") return;
     }
@@ -105,15 +105,15 @@ export class ClassCreated extends React.Component {
     const { navigate } = this.props.navigation;
 
     return (
-      <View>
+      <View style={styles.container}>
         <Text>
           Your classroom has been created
         </Text>
         <Text>
-          Your classroom ID: 
-          {this.state.classID}
+          Your classroom ID is {this.state.classID}
         </Text>
         <Button
+          style={styles.buttons}
           mode="contained"
           onPress={() => navigate("WordDemo", { classID: this.state.classID })}
         >
