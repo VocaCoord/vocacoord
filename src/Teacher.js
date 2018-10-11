@@ -115,7 +115,7 @@ export class ClassCreated extends React.Component {
         <Button
           style={styles.buttons}
           mode="contained"
-          onPress={() => navigate("WordDemo", { classID: this.state.classID })}
+          onPress={() => navigate("WordBanks", { classID: this.state.classID })}
         >
           Go to your classroom
         </Button>

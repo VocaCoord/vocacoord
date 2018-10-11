@@ -3,7 +3,7 @@ import { HomeScreen } from './Home.js';
 import { TeacherScreen, CreateClass, ExistingClass, ClassCreated } from './Teacher.js';
 import { VoiceDemo } from './VoiceDemo.js';
 import { StudentScreen } from './Student.js';
-import { WordDemo } from './WordDemo.js';
+import { WordBanks, WordBank } from './WordBanks.js';
 
 /* indention below represents the nested structure of components */
 export default AppNavigator = createStackNavigator(
@@ -19,7 +19,8 @@ export default AppNavigator = createStackNavigator(
         CreateClass,
           ClassCreated,
           VoiceDemo,
-          WordDemo,
+          WordBanks,
+            WordBank,
         ExistingClass,
     
       StudentScreen,
