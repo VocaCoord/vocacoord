@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
-import { ListItem, Button } from "react-native-elements";
+import { ListItem, Button, Icon } from "react-native-elements";
 import Dialog from "react-native-dialog";
 
 export class WordBanks extends React.Component {
@@ -38,9 +38,11 @@ export class WordBanks extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
       headerRight: (
-        <Button
+        <Icon
           onPress={navigation.getParam("openDialog")}
-          title="+"
+          name="add"
+          raised
+          reverse
         />
       )
     };
