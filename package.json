@@ -3,24 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "jest-expo": "~27.0.0",
-    "react-native-scripts": "^2.0.1",
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "jest-react-native": "^18.0.0",
     "react-test-renderer": "16.3.1"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
-    "start": "expo start",
-    "eject": "expo eject",
-    "android": "expo android",
-    "ios": "expo ios",
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "test": "jest"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "react-native"
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
-    "expo": "^28.0.1",
     "expo-cli": "^2.2.0",
     "npm": "^6.4.1",
     "react": "^16.5.2",
