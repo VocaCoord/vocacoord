@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
+let api = "https://temp-vocacoord.herokuapp.com/api/";
+
 export class TeacherScreen extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
@@ -96,12 +98,12 @@ export class ClassCreated extends React.Component {
     this.state = {
       classID: null,
       loading: true,
-      loadingDelay: 5000
+      loadingDelay: 2500
     }
   }
 
   componentDidMount() {
-    fetch("https://temp-vocacoord.herokuapp.com/api/create", {
+    fetch(api + "create", {
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -120,7 +122,7 @@ export class ClassCreated extends React.Component {
 
     return (
       <View style={styles.container}>
-        {!this.state.classID && this.state.loading ? (
+        {!this.state.classID || this.state.loading ? (
           <View>
             <Text>
               Hold on while we create your class room...
