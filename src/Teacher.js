@@ -1,6 +1,8 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+
+let api = "https://temp-vocacoord.herokuapp.com/api/";
 
 export class TeacherScreen extends React.Component {
   render() {
@@ -94,11 +96,25 @@ export class ClassCreated extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      classID: Math.random()
-        .toString(36)
-        .substring(2, 6)
-        .toUpperCase()
-    };
+      classID: null,
+      loading: true,
+      loadingDelay: 2500
+    }
+  }
+
+  componentDidMount() {
+    fetch(api + "create", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res => res.json()).then(json => this.setState({ classID: json.classID }));
+
+    this.timeoutID = setTimeout(() => this.setState({ loading: false }), this.state.loadingDelay);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutID);
   }
 
   render() {
@@ -106,19 +122,30 @@ export class ClassCreated extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text>
-          Your classroom has been created
-        </Text>
-        <Text>
-          Your classroom ID is {this.state.classID}
-        </Text>
-        <Button
-          style={styles.buttons}
-          mode="contained"
-          onPress={() => navigate("WordBanks", { classID: this.state.classID })}
-        >
-          Go to your classroom
-        </Button>
+        {!this.state.classID || this.state.loading ? (
+          <View>
+            <Text>
+              Hold on while we create your class room...
+            </Text>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <View>
+            <Text>
+              Your classroom has been created
+            </Text>
+            <Text>
+              Your classroom ID is {this.state.classID}
+            </Text>
+            <Button
+              style={styles.buttons}
+              mode="contained"
+              onPress={() => navigate("WordBanks", { classID: this.state.classID })}
+            >
+              Go to your classroom
+            </Button>
+          </View>
+        )}
       </View>
     );
   }
