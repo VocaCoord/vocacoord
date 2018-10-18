@@ -2,6 +2,9 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import Voice from "react-native-voice";
+import ClusterWS from "clusterws-client-js";
+
+let api = "https://temp-vocacoord.herokuapp.com/api/";
 
 export class VoiceDemo extends React.Component {
   constructor(props) {
@@ -12,20 +15,55 @@ export class VoiceDemo extends React.Component {
     Voice.onSpeechPartialResults = this.onSpeechPartialResultsHandler.bind(this);
   }
 
+  componentDidMount() {
+    fetch(api + "create", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(res => res.json()).then(json => {
+      let classID = json.classID;
+
+      this.socket = new ClusterWS({
+        url: "wss://temp-vocacoord.herokuapp.com/"
+      });
+      this.socket.on('connect', () => {
+        console.log('connected to the socket');
+        /* this is for testing, only the student app will be subscribing to and watching the channel in prod. */
+        this.channel = this.socket.subscribe(classID);
+        this.channel.watch(msg => {
+          console.log(`heard this message: ${msg}`);
+        });
+      });
+      this.socket.on('error', (err) => {
+        console.error('error: ', err);
+      });
+      this.socket.on('disconnect', (code, reason) => {
+        console.log(`disconnected with code ${code} and reason ${reason}`);
+        this.channel.unsubscribe();
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.socket.disconnect();
+  }
+
   onSpeechStartHandler(e) {
-    console.log('starting', e)
+    console.log('starting voice activity:', e)
   }
 
   onSpeechEndHandler(e) {
-    console.log('ending', e)
+    console.log('ending voice activity:', e)
   }
 
   onSpeechResultsHandler(e) {
-    console.log('results', e)
+    console.log('final voice results:', e)
   }
 
   onSpeechPartialResultsHandler(e) {
-    console.log('partial', e)
+    console.log('partial voice results:', e)
+    this.channel.publish(JSON.stringify(e));
   }
 
   render() {

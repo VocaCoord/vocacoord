@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
+    "clusterws-client-js": "^3.0.6",
     "expo-cli": "^2.2.0",
     "npm": "^6.4.1",
     "react": "^16.5.2",
