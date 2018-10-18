@@ -46,7 +46,7 @@ export class VoiceDemo extends React.Component {
   }
 
   componentWillUnmount() {
-    this.socket.disconnect();
+    if (this.socket) this.socket.disconnect();
   }
 
   onSpeechStartHandler(e) {
