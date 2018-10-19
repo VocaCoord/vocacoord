@@ -35,8 +35,9 @@ export class StudentScreen extends Component {
         this.channel.unsubscribe();
       });
 
+		const { navigate } = this.props.navigation;
+		navigate("ClassScreen");
       /* navigate to the class here */
-
       
     }
   }
@@ -69,10 +70,14 @@ export class StudentScreen extends Component {
 }
 
 /* Class screen for showing the word bank and words that popped up */
-class ClassScreen extends Component {
+export class ClassScreen extends React.Component {
   render() {
     return (
-      <View></View>
+      <View>
+		<Text>
+			Successful screen redirect, huzzah.
+		</Text>
+	  </View>
     )
   }
 }
