@@ -6,7 +6,7 @@ import ClusterWS from "clusterws-client-js";
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
 export class StudentScreen extends Component {
-  
+
   constructor(props) {
     super(props);
     this.state = {
@@ -23,11 +23,11 @@ export class StudentScreen extends Component {
       this.socket.on('connect', () => {
         console.log('connected to the socket');
         this.channel = this.socket.subscribe(classID);
-		const { navigate } = this.props.navigation;
-		navigate("ClassScreen", { channel: this.channel});
-   //     this.channel.watch(msg => {
-         // console.log(`student heard this message: ${msg}`);
-     //   });
+        const { navigate } = this.props.navigation;
+        navigate("ClassScreen", { channel: this.channel });
+        //     this.channel.watch(msg => {
+        // console.log(`student heard this message: ${msg}`);
+        //   });
       });
       this.socket.on('error', (err) => {
         console.error('error: ', err);
@@ -70,45 +70,47 @@ export class StudentScreen extends Component {
 /* Class screen for showing the word bank and words that popped up */
 export class ClassScreen extends React.Component {
   constructor(props) {
-	  super(props);
-	  const { navigation } = props, channel = navigation.getParam('channel');
-	  this.state = {
-		 words: [] 
-	  }
-	  channel.watch(msg => {		//Treats the end of the array as the most recent word said
-          console.log(`student heard this message: ${msg}`);
-		  const words = this.state.words;
-		  var index;	
-		 if((index = words.indexOf(msg)) > -1){
-			var temp = words[index]
-			for(var i = index; i < words.length - 1; i++)
-				words[i] = words[i + 1]
+    super(props);
+    const { navigation } = props, channel = navigation.getParam('channel');
+    this.state = {
+      words: []
+    }
+    channel.watch(msg => {		//Treats the end of the array as the most recent word said
+      console.log(`student heard this message: ${msg}`);
+      const words = this.state.words;
+      var index;
+      if ((index = words.indexOf(msg)) > -1) {
+        var temp = words[index]
+        for (var i = index; i < words.length - 1; i++)
+          words[i] = words[i + 1]
 
-			words[words.length - 1] = temp;
-		  }else{
-			 words.push(msg);
-		  }
-		 this.setState({ words });
-		 this.forceUpdate();
-	  });
-	
-	const testing = ['test','test1','test2','test', 'test2','test3']
-	for(let word of testing) {
-		channel.publish(word)
-	}
- }
-  
+        words[words.length - 1] = temp;
+      } else {
+        words.push(msg);
+      }
+      this.setState({ words });
+    });
+
+    const testing = ['test', 'test1', 'test2', 'test', 'test2', 'test3']
+    for (let word of testing) {
+      channel.publish(word)
+    }
+  }
+
   render() {
     return (
       <View>
-		<Text>
-			Most recent word said: {this.state.words[this.state.words.length - 1]}
-			{'\n'}
-			Entire word list: {this.state.words}
-			{'\n'}
-			{'\n'}
-		</Text>
-	  </View>
+        {
+          this.state.words.length > 0 &&
+          this.state.words.map((word, i) => {
+            return (
+              <Text>
+                {`${word}\n`}
+              </Text>
+            )
+          })
+        }
+      </View>
     )
   }
 }
