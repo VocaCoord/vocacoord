@@ -7,6 +7,8 @@ export class WordBanks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      className: props.navigation.getParam('className'),
+      classID: props.navigation.getParam('classID'),
       wordBankID: 0,
       showDialog: false,
       wordBankName: "",
@@ -17,7 +19,7 @@ export class WordBanks extends React.Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ openDialog: this._openDialog });
+    this.props.navigation.setParams({ openDialog: this.openDialog });
     
     AsyncStorage.getItem('wordBanks')
       .then(r => {
@@ -37,6 +39,7 @@ export class WordBanks extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
+      headerTitle: <Text>{`${navigation.getParam('className')}/${navigation.getParam('classID')}`}</Text>,
       headerRight: (
         <Icon
           onPress={navigation.getParam("openDialog")}
@@ -82,7 +85,7 @@ export class WordBanks extends React.Component {
     }
   }
 
-  _openDialog = () => this.setState({ showDialog: true });
+  openDialog = () => this.setState({ showDialog: true });
 
   closeDialog = () => this.setState({ showDialog: false, wordBankName: "" });
 
@@ -113,7 +116,7 @@ export class WordBanks extends React.Component {
                 key={i}
                 title={wordBank.name}
                 subtitle={wordBank.createdAt ? wordBank.createdAt : null}
-                onPress={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
+                onPressRightIcon={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
               />
             )
           })
@@ -166,12 +169,12 @@ export class WordBank extends React.Component {
     this.closeDialog();
   };
 
-  _openDialog = () => this.setState({ showDialog: true });
+  openDialog = () => this.setState({ showDialog: true });
 
   closeDialog = () => this.setState({ showDialog: false, wordName: "" });
 
   componentDidMount() {
-    this.props.navigation.setParams({ openDialog: this._openDialog });
+    this.props.navigation.setParams({ openDialog: this.openDialog });
   }
 
   render() {

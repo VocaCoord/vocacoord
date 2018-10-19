@@ -29,6 +29,7 @@
     "react-native-vector-icons": "^4.6.0",
     "react-native-voice": "^0.2.6",
     "react-navigation": "^2.17.0",
+    "react-redux": "^5.0.7",
     "xdl": "^51.4.0"
   }
 }

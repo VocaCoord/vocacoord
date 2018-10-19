@@ -75,7 +75,7 @@ export class CreateClass extends React.Component {
           <Button
             mode="contained"
             disabled={!this.canSubmit}
-            onPress={() => navigate("ClassCreated")}
+            onPress={() => navigate("ClassCreated", { className: this.state.className })}
           >
             Create Classroom
           </Button>
@@ -96,11 +96,18 @@ export class ClassCreated extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      className: props.navigation.getParam('className'),
       classID: null,
       loading: true,
       loadingDelay: 2500
     }
   }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerTitle: <Text>{`${navigation.getParam('className')}`}</Text>
+    };
+  };
 
   componentDidMount() {
     fetch(api + "create", {
@@ -140,7 +147,7 @@ export class ClassCreated extends React.Component {
             <Button
               style={styles.buttons}
               mode="contained"
-              onPress={() => navigate("WordBanks", { classID: this.state.classID })}
+              onPress={() => navigate("WordBanks", { classID: this.state.classID, className: this.state.className })}
             >
               Go to your classroom
             </Button>
