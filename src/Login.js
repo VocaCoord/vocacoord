@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
+let api = "https://temp-vocacoord.herokuapp.com/api/";
+
 export class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +13,24 @@ export class LoginScreen extends Component {
     };
   }
 
-  validateUser() {}
+  validateUser() {
+    const { email, password } = this.state;
+    fetch(api + "login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    })
+      .then(res => {
+        if (res.status === 200) {
+          console.log("handle login");
+        } else if (res.status === 400) {
+          console.log("handle failed login");
+        }
+      })
+      .catch(err => console.log(err));
+  }
 
   render() {
     const { navigate } = this.props.navigation;
@@ -31,7 +50,7 @@ export class LoginScreen extends Component {
             value={this.state.password}
             onChangeText={password => this.setState({ password })}
           />
-          <Button mode="contained" onPress={() => validateUser()}>
+          <Button mode="contained" onPress={() => this.validateUser()}>
             Login
           </Button>
           <Button mode="text" onPress={() => navigate("SignupScreen")}>

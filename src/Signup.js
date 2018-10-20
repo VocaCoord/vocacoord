@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
+let api = "https://temp-vocacoord.herokuapp.com/api/";
+
 export class SignupScreen extends Component {
   constructor(props) {
     super(props);
@@ -14,7 +16,22 @@ export class SignupScreen extends Component {
   }
 
   createAccount() {
-
+    const { firstName, lastName, email, password } = this.state;
+    fetch(api + "signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ firstName, lastName, email, password })
+    })
+      .then(res => {
+        if (res.status === 200) {
+          console.log("handle signed in");
+        } else if (res.status === 400) {
+          console.log("handle account already exists");
+        }
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -46,7 +63,7 @@ export class SignupScreen extends Component {
             value={this.state.password}
             onChangeText={password => this.setState({ password })}
           />
-          <Button mode="contained" onPress={() => createAccount()}>
+          <Button mode="contained" onPress={() => this.createAccount()}>
             Create Account
           </Button>
         </View>
