@@ -1,5 +1,7 @@
 import { createStackNavigator } from 'react-navigation';
 import { HomeScreen } from './Home.js';
+import { LoginScreen } from './Login.js';
+import { SignupScreen } from './Signup.js';
 import { TeacherScreen, CreateClass, ExistingClass, ClassCreated } from './Teacher.js';
 import { VoiceDemo } from './VoiceDemo.js';
 import { StudentScreen, ClassScreen } from './Student.js';
@@ -14,17 +16,18 @@ export default AppNavigator = createStackNavigator(
         header: null
       }
     },
-
-      TeacherScreen,
-        CreateClass,
-          ClassCreated,
-          VoiceDemo,
-          WordBanks,
-            WordBank,
-        ExistingClass,
+      LoginScreen,
+        SignupScreen,
+        TeacherScreen,
+          CreateClass,
+            ClassCreated,
+            VoiceDemo,
+            WordBanks,
+              WordBank,
+          ExistingClass,
     
       StudentScreen,
-		ClassScreen,
+		    ClassScreen,
   },
   {
     initialRouteName: 'HomeScreen'

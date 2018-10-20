@@ -1,25 +1,22 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import React, { Component } from "react";
+import { StyleSheet, View } from "react-native";
+import { Button } from "react-native-paper";
 
-export class HomeScreen extends React.Component {
+export class HomeScreen extends Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.buttons}>
-        <Button
-          mode="contained"
-          onPress={() => navigate('TeacherScreen')}
-        >
-          Teacher
-        </Button>
-        <Button
-          mode="contained"
-          onPress={() => navigate('StudentScreen')}
-        >
-          Student
-        </Button>
+          <Button
+            mode="contained"
+            onPress={() => navigate("LoginScreen")}
+          >
+            Teacher
+          </Button>
+          <Button mode="contained" onPress={() => navigate("StudentScreen")}>
+            Student
+          </Button>
         </View>
       </View>
     );
@@ -29,12 +26,12 @@ export class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center"
   },
   buttons: {
-    minWidth: '60%',
-    maxWidth: '60%'
+    minWidth: "60%",
+    maxWidth: "60%"
   }
 });
