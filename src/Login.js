@@ -29,9 +29,13 @@ export class LoginScreen extends Component {
     })
       .then(res => {
         if (res.status === 200) {
-          navigate("TeacherScreen", {
-            callback: this.isAuthenticated.bind(this)
-          });
+          setTimeout(
+            () =>
+              navigate("TeacherScreen", {
+                callback: this.isAuthenticated.bind(this)
+              }),
+            3000
+          );
         } else if (res.status === 400) {
           console.log("handle failed login");
         }
