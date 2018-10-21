@@ -1,10 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
-export class TeacherScreen extends React.Component {
+export class TeacherScreen extends Component {
+  componentWillMount() {
+    this.props.navigation.addListener('didFocus', () => this.props.navigation.getParam('callback')());
+  }
+  
   render() {
     const { navigate } = this.props.navigation;
     return (
@@ -22,7 +26,7 @@ export class TeacherScreen extends React.Component {
   }
 }
 
-export class CreateClass extends React.Component {
+export class CreateClass extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,7 +75,7 @@ export class CreateClass extends React.Component {
   }
 }
 
-export class ClassCreated extends React.Component {
+export class ClassCreated extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -137,7 +141,7 @@ export class ClassCreated extends React.Component {
   }
 }
 
-export class ExistingClass extends React.Component {
+export class ExistingClass extends Component {
   render() {
     return (
       <View style={styles.container}>
