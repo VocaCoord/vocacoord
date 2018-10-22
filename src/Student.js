@@ -101,7 +101,15 @@ export class ClassScreen extends React.Component {
 		    return  <ListItem
 		  	    key={i}
 			    title={w.word}
+				titleStyle={{
+					color: (i == 0) ? 'red' : 'black',
+					fontSize: 32,
+				}}
 			    rightTitle={w.count}
+				rightTitleStyle={{
+					color: 'black',
+					fontSize: 24,
+				}}
 			    hideChevron={true}
 			  />
 		  })}
