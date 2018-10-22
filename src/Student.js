@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { ListItem } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
@@ -10,13 +10,16 @@ export class StudentScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      classID: null
+      classID: null,
+      loading: false
     };
   }
 
   connectToClass() {
     let classID = this.state.classID;
     if (classID && classID.length === 4) {
+      this.setState({ loading: true });
+
       this.socket = new ClusterWS({
         url: "wss://temp-vocacoord.herokuapp.com/"
       });
@@ -24,7 +27,14 @@ export class StudentScreen extends Component {
         console.log("connected to the socket");
         this.channel = this.socket.subscribe(classID);
         const { navigate } = this.props.navigation;
-        navigate("ClassScreen", { channel: this.channel });
+        setTimeout(
+          () =>
+            navigate("ClassScreen", {
+              channel: this.channel,
+              callback: this.isConnected.bind(this)
+            }),
+          3000
+        );
       });
       this.socket.on("error", err => {
         console.error("error: ", err);
@@ -36,6 +46,10 @@ export class StudentScreen extends Component {
     }
   }
 
+  isConnected() {
+    this.setState({ loading: false });
+  }
+
   componentWillUnmount() {
     if (this.socket) this.socket.disconnect();
   }
@@ -43,21 +57,29 @@ export class StudentScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>This is the student screen</Text>
-        <TextInput
-          style={styles.textboxes}
-          label="Class ID"
-          mode="outlined"
-          value={this.state.classID}
-          onChangeText={classID => this.setState({ classID })}
-        />
-        <Button
-          style={styles.buttons}
-          mode="contained"
-          onPress={() => this.connectToClass()}
-        >
-          Connect
-        </Button>
+        {this.state.loading ? (
+          <View>
+            <Text>Hold on while we try to connect you to the class...</Text>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <View>
+            <TextInput
+              style={styles.textboxes}
+              label="Class ID"
+              mode="outlined"
+              value={this.state.classID}
+              onChangeText={classID => this.setState({ classID })}
+            />
+            <Button
+              style={styles.buttons}
+              mode="contained"
+              onPress={() => this.connectToClass()}
+            >
+              Connect
+            </Button>
+          </View>
+        )}
       </View>
     );
   }
@@ -93,27 +115,34 @@ export class ClassScreen extends React.Component {
     })();
   }
 
+  componentWillMount() {
+    this.props.navigation.addListener("didFocus", () =>
+      this.props.navigation.getParam("callback")()
+    );
+  }
+
   render() {
     return (
       <View>
         {this.state.words.length > 0 &&
           this.state.words.map((w, i) => {
-		    return  <ListItem
-		  	    key={i}
-			    title={w.word}
-				titleStyle={{
-					color: (i == 0) ? 'red' : 'black',
-					fontSize: 32,
-				}}
-			    rightTitle={w.count}
-				rightTitleStyle={{
-					color: 'black',
-					fontSize: 24,
-				}}
-			    hideChevron={true}
-			  />
-		  })}
-		  
+            return (
+              <ListItem
+                key={i}
+                title={w.word}
+                titleStyle={{
+                  color: i == 0 ? "red" : "black",
+                  fontSize: 32
+                }}
+                rightTitle={`Times said: ${w.count}`}
+                rightTitleStyle={{
+                  color: "black",
+                  fontSize: 24
+                }}
+                hideChevron={true}
+              />
+            );
+          })}
       </View>
     );
   }
