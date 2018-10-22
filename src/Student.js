@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { ListItem } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
@@ -97,8 +98,14 @@ export class ClassScreen extends React.Component {
       <View>
         {this.state.words.length > 0 &&
           this.state.words.map((w, i) => {
-            return <Text>{`${w.word} has been said ${w.count} times.\n`}</Text>;
-          })}
+		    return  <ListItem
+		  	    key={i}
+			    title={w.word}
+			    rightTitle={w.count}
+			    hideChevron={true}
+			  />
+		  })}
+		  
       </View>
     );
   }
