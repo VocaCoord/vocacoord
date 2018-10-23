@@ -77,7 +77,14 @@ export class LoginScreen extends Component {
             <Button mode="text" onPress={() => navigate("SignupScreen")}>
               No account? Create one
             </Button>
-            <Button mode="contained" onPress={() => navigate("TeacherScreen")}>
+            <Button
+              mode="contained"
+              onPress={() =>
+                navigate("TeacherScreen", {
+                  callback: this.isAuthenticated.bind(this)
+                })
+              }
+            >
               Get to Classroom screen
             </Button>
           </View>
