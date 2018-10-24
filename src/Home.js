@@ -14,12 +14,13 @@ export class HomeScreen extends Component {
         <View style={styles.buttons}>
           <Button
             mode="contained"
+			color="#ffa500"
             onPress={() => navigate("LoginScreen")}
           >
             <Text style={styles.buttonText}>Teacher</Text>
           </Button>
 		  <Divider style={styles.buttonDivider}/>
-          <Button mode="contained" onPress={() => navigate("StudentScreen")}>
+          <Button color="#ffa500" mode="contained" onPress={() => navigate("StudentScreen")}>
             <Text style={styles.buttonText}>Student</Text>
           </Button>
         </View>
@@ -56,5 +57,5 @@ const styles = StyleSheet.create({
   },
   logoButtonDiv: {
 	  height: "20%"
-  }
+  },
 });

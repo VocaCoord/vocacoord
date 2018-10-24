@@ -74,14 +74,15 @@ export class LoginScreen extends Component {
               onChangeText={password => this.setState({ password })}
             />
 			<Divider style={styles.fieldsButtonDiv}/>
-            <Button mode="contained" onPress={() => this.authenticateUser()}>
+            <Button color="#ffa500" mode="contained" onPress={() => this.authenticateUser()}>
               <Text style={styles.loginText}>Login</Text>
             </Button>
-            <Button mode="text" onPress={() => navigate("SignupScreen")}>
-              <Text style={styles.noAccountText}>No account?</Text>
+            <Button color="#ffa500" mode="text" onPress={() => navigate("SignupScreen")}>
+              <Text color="#000000" style={styles.noAccountText}>No account?</Text>
             </Button>
             <Button
               mode="contained"
+			  color="#ffa500"
               onPress={() =>
                 navigate("TeacherScreen", {
                   callback: this.isAuthenticated.bind(this)
