@@ -55,7 +55,7 @@ export class LoginScreen extends Component {
         {this.state.loading ? (
           <View>
             <Text>Hold on while we try to log you in...</Text>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color="#ffa500" />
           </View>
         ) : (
           <View style={styles.buttons}>
