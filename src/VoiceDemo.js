@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Button } from "react-native-paper";
+import { Divider } from "react-native-elements";
 import Voice from "react-native-voice";
 import ClusterWS from "clusterws-client-js";
 
@@ -119,13 +120,14 @@ export class VoiceDemo extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.buttons}>
-          <Button mode="contained" onPress={() => Voice.start('en-US')}>
-            Listen
+          <Button color="#ffa500" mode="contained" onPress={() => Voice.start('en-US')}>
+            <Text style={styles.buttonText}>Listen</Text>
           </Button>
         </View>
+		<Divider style={styles.buttonDiv}/>
         <View style={styles.buttons}>
-          <Button mode="contained" onPress={() => Voice.stop()}>
-            Stop Listening
+          <Button color="#ffa500" mode="contained" onPress={() => Voice.stop()}>
+            <Text style={styles.buttonText}>Stop Listening</Text>
           </Button>
         </View>
       </View>
@@ -143,5 +145,14 @@ const styles = StyleSheet.create({
   buttons: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
+  },
+  buttonDiv: {
+	  height: "5%",
+	  backgroundColor: '#fff'
   }
 });
