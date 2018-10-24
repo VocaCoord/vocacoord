@@ -1,4 +1,6 @@
 import React from "react";
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import IonIcon from 'react-native-vector-icons/Ionicons';
 import Swipeout from 'react-native-swipeout';
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { ListItem, Button, Icon } from "react-native-elements";
@@ -103,6 +105,14 @@ export class WordBanks extends React.Component {
   onSwipeClose(rowID) {
 		if (rowID === this.state.rowID) this.setState({ rowID: null });
 	}
+  editWordBank = index => {
+	const wordBanks = [...this.state.wordBanks];
+	console.log(index);
+	this.setState({ showDialog: true});
+	wordBanks[0].name = 'Frisco';
+	this.setState({ wordBanks, showDialog: false }, () => this.storeWordBanks());
+
+  }
   
   render() {
     const { navigate } = this.props.navigation;
@@ -127,12 +137,13 @@ export class WordBanks extends React.Component {
           this.state.wordBanks.map((wordBank, i) => {
             return (
 			<Swipeout right={[{
-				text: 'Edit'
+				text: <Icon name="edit" size={25} color="white"/>,
+				onPress: () => this.editWordBank(i),
 			},
 			{
-				text: 'Delete',
+				text: <Icon name="delete" size={25} color="white"/>,
 				backgroundColor: '#ff0000',
-				onPress: () => this.deleteWordBank(i)
+				onPress: () => this.deleteWordBank(i),
 				}]}
 				key={i}
 				onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
@@ -143,6 +154,7 @@ export class WordBanks extends React.Component {
 			<View>
               <ListItem
                 title={wordBank.name}
+				style={styles.wordBankStyle}
                 subtitle={wordBank.createdAt ? wordBank.createdAt : null}
                 onPress={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
               />
@@ -243,12 +255,11 @@ export class WordBank extends React.Component {
         {
           this.state.words.length > 0 ? (
           this.state.words.map((word, i) => (
-		  ////
 			<Swipeout right={[{
-				text: 'Edit'
+				text: <Icon name="edit" size={25} color="white"/>,
 			}
 			,{
-				text: 'Delete',
+				text: <Icon name="delete" size={25} color="white"/>,
 				backgroundColor: '#ff0000',
 				onPress: () => this.deleteWord(i)
 				}]}
@@ -265,7 +276,6 @@ export class WordBank extends React.Component {
             />
 		</View>
 		</Swipeout>
-			//////
           ))
           ) : (
             <View style={styles.container}>
@@ -286,5 +296,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  wordBankStyle: {
+	  backgroundColor: "#fff"
+  },
+  filler: {
+	  height: "50%",
+	  backgroundColor: "#fff"
   }
 });

@@ -80,17 +80,6 @@ export class LoginScreen extends Component {
             <Button color="#ffa500" mode="text" onPress={() => navigate("SignupScreen")}>
               <Text style={styles.noAccountText}>No account?</Text>
             </Button>
-            <Button
-              mode="contained"
-			  color="#ffa500"
-              onPress={() =>
-                navigate("TeacherScreen", {
-                  callback: this.isAuthenticated.bind(this)
-                })
-              }
-            >
-              Get to Classroom screen
-            </Button>
           </View>
         )}
       </View>

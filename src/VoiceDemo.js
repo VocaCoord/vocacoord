@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Button } from "react-native-paper";
+import { Divider } from "react-native-elements";
 import Voice from "react-native-voice";
 import ClusterWS from "clusterws-client-js";
 
@@ -93,16 +94,26 @@ export class VoiceDemo extends React.Component {
 	let newWords = []
 	const wordbank = this.state.wordBanks[0].words.map(v => v.toLowerCase());
 
-	newString.forEach((word) => {
-		if(!oldString.includes(word))
-			newWords.push(word)
-	});
+//	newString.forEach((word) => {
+//		if(!oldString.includes(word))
+//			newWords.push(word)
+//	});
 
-	for(let i = oldString.length; i < newString.length; i++)
-		newWords.push(newString[i])
+//	for(let i = oldString.length; i < newString.length; i++)
+//		newWords.push(newString[i])
+
+	for(let i = 0; i < newString.length;i++){
+		if(i < oldString.length && !oldString.includes(newString[i])){
+			newWords.push(newString[i]);
+		}else if(i >= oldString.length){
+			newWords.push(newString[i]);
+		}
+	}
 
 	//Looking in word bank[0] for testing purposes
-	console.log(newWords);
+	console.log(`Old String: ${oldString}`);
+	console.log(`New String: ${newString}`);
+	console.log(`New words to potentially publish: ${newWords}`);
 	
 	newWords.forEach((word) => {
 		if(wordbank.includes(word)){
@@ -119,13 +130,14 @@ export class VoiceDemo extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.buttons}>
-          <Button mode="contained" onPress={() => Voice.start('en-US')}>
-            Listen
+          <Button color="#ffa500" mode="contained" onPress={() => Voice.start('en-US')}>
+            <Text style={styles.buttonText}>Listen</Text>
           </Button>
         </View>
+		<Divider style={styles.buttonDiv}/>
         <View style={styles.buttons}>
-          <Button mode="contained" onPress={() => Voice.stop()}>
-            Stop Listening
+          <Button color="#ffa500" mode="contained" onPress={() => Voice.stop()}>
+            <Text style={styles.buttonText}>Stop Listening</Text>
           </Button>
         </View>
       </View>
@@ -143,5 +155,14 @@ const styles = StyleSheet.create({
   buttons: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
+  },
+  buttonDiv: {
+	  height: "5%",
+	  backgroundColor: '#fff'
   }
 });

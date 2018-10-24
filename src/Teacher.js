@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { Divider } from "react-native-elements";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
@@ -14,11 +15,12 @@ export class TeacherScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.buttons}>
-          <Button mode="contained" onPress={() => navigate("CreateClass")}>
-            Create a new classroom
+          <Button color="#ffa500" mode="contained" onPress={() => navigate("CreateClass")}>
+            <Text style={styles.buttonText}>Create a new classroom</Text>
           </Button>
-          <Button mode="contained" onPress={() => navigate("ExistingClass")}>
-            Use an existing classroom
+		  <Divider style={styles.buttonDiv}/>
+          <Button color="#ffa500" mode="contained" onPress={() => navigate("ExistingClass")}>
+            <Text style={styles.buttonText}>Use an existing classroom</Text>
           </Button>
         </View>
       </View>
@@ -50,24 +52,29 @@ export class CreateClass extends Component {
       <View style={styles.container}>
         <View style={styles.textboxes}>
           <TextInput
+		    style={{ marginBottom: 1 }}
             label="Classroom Name"
             mode="outlined"
             value={this.state.className}
             onChangeText={className => this.setState({ className })}
           />
+		  <Divider style={styles.createCRoomDiv}/>
           <Button
+			color="#ffa500"
             mode="contained"
             disabled={!this.canSubmit}
             onPress={() => navigate("ClassCreated", { className: this.state.className })}
           >
-            Create Classroom
+            <Text style={styles.buttonText}>Create Classroom</Text>
           </Button>
+		  <Divider style={styles.createCRoomDiv}/>
           <Button
+			color="#ffa500"
             mode="contained"
             disabled={!this.canSubmit}
             onPress={() => navigate("VoiceDemo")}
           >
-            Voice Demo
+            <Text style={styles.buttonText}>Voice Demo</Text>
           </Button>
         </View>
       </View>
@@ -115,25 +122,25 @@ export class ClassCreated extends Component {
       <View style={styles.container}>
         {!this.state.classID || this.state.loading ? (
           <View>
-            <Text>
-              Hold on while we create your class room...
+            <Text style={styles.classroomText}>
+              Hold on while we create your classroom...
             </Text>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color="#ffa500" />
           </View>
         ) : (
           <View>
-            <Text>
-              Your classroom has been created
+            <Text style={styles.classroomText}>
+              Your classroom has been created with the following ID:  <Text style={styles.idText}>{this.state.classID}</Text>  
+			  
             </Text>
-            <Text>
-              Your classroom ID is {this.state.classID}
-            </Text>
+			<Divider style={styles.buttonDiv}/>
             <Button
+		      color="#ffa500"
               style={styles.buttons}
               mode="contained"
               onPress={() => navigate("WordBanks", { classID: this.state.classID, className: this.state.className })}
             >
-              Go to your classroom
+              <Text style={styles.buttonText}>Go to your classroom</Text>
             </Button>
           </View>
         )}
@@ -156,8 +163,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center"
-    //justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: 'center'
   },
   buttons: {
     minWidth: "60%",
@@ -166,5 +173,27 @@ const styles = StyleSheet.create({
   textboxes: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
+  },
+  buttonDiv: {
+	  height: "15%",
+	  backgroundColor: "#fff"
+  },
+  createCRoomDiv: {
+	  height: "10%",
+	  backgroundColor: "#fff"
+  },
+  classroomText: {
+	  fontSize: 18,
+	  color: 'black'
+  },
+  idText: {
+	  fontSize: 18,
+	  fontWeight: "bold",
+	  color: 'black'
   }
 });
