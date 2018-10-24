@@ -106,13 +106,13 @@ export class ClassScreen extends React.Component {
       words.unshift(word);
       this.setState({ words });
     });
-
+/*
     const testing = ["test", "test1", "test2", "test", "test2", "test3"];
     let idx = 0;
     (function publish() {
       channel.publish(testing[idx++]);
       if (idx < testing.length) setTimeout(publish, 2000);
-    })();
+    })();*/
   }
 
   componentWillMount() {
