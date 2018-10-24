@@ -78,7 +78,7 @@ export class LoginScreen extends Component {
               <Text style={styles.loginText}>Login</Text>
             </Button>
             <Button color="#ffa500" mode="text" onPress={() => navigate("SignupScreen")}>
-              <Text color="#000000" style={styles.noAccountText}>No account?</Text>
+              <Text style={styles.noAccountText}>No account?</Text>
             </Button>
             <Button
               mode="contained"
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
   },
   noAccountText: {
 	  fontSize: 18,
-	  fontWeight: "bold"
+	  fontWeight: "bold",
+	  color: "black"
   }
 });
