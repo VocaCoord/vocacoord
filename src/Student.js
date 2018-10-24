@@ -17,7 +17,8 @@ export class StudentScreen extends Component {
 
   connectToClass() {
     let classID = this.state.classID;
-    if (classID && classID.length === 4) {
+    console.log(`Student ClassID: ${classID}`);
+	if (classID && classID.length === 4) {
       this.setState({ loading: true });
 
       this.socket = new ClusterWS({

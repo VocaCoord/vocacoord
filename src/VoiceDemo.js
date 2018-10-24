@@ -28,8 +28,8 @@ export class VoiceDemo extends React.Component {
       }
     }).then(res => res.json()).then(json => {
       let classID = json.classID;
-
-      this.socket = new ClusterWS({
+      console.log(`Voice ClassID: ${classID}`);
+	  this.socket = new ClusterWS({
         url: "wss://temp-vocacoord.herokuapp.com/"
       });
       this.socket.on('connect', () => {
