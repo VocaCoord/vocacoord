@@ -95,9 +95,21 @@ export class WordBanks extends React.Component {
 	wordBanks.splice(index, 1);
 	this.setState({ wordBanks });
   }
+
+  onSwipeOpen (rowIndex) {
+		this.setState({
+			rowIndex: rowIndex
+		})
+	}
+  onSwipeClose(rowIndex) {
+		if (rowIndex === this.state.rowIndex) {
+			this.setState({ rowIndex: null });
+		}
+	}
   
   render() {
     const { navigate } = this.props.navigation;
+	var index = null;
     return (
       <View>
         <Dialog.Container visible={this.state.showDialog}>
@@ -123,7 +135,12 @@ export class WordBanks extends React.Component {
 				text: 'Delete',
 				backgroundColor: '#ff0000',
 				onPress: () => this.deleteWordBank(i),
-				autoClose: 'true',
+				onOpen: ()=>(this.onSwipeOpen(i)),
+				close: this.state.rowIndex !== i,
+				onClose: ()=>(this.onSwipeClose(i)),
+				rowIndex: i,
+				autoClose: true
+
 			}
 			]
 			}
