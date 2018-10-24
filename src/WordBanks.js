@@ -105,8 +105,7 @@ export class WordBanks extends React.Component {
   onSwipeClose(rowID) {
 		if (rowID === this.state.rowID) this.setState({ rowID: null });
 	}
-  editWordBank(index){
-	const wordBankName = [...this.state.wordBankName];
+  editWordBank = index => {
 	const wordBanks = [...this.state.wordBanks];
 	console.log(index);
 	this.setState({ showDialog: true});
@@ -139,12 +138,12 @@ export class WordBanks extends React.Component {
             return (
 			<Swipeout right={[{
 				text: <Icon name="edit" size={25} color="white"/>,
-				onPress: (i) => this.editWordBank(i),
+				onPress: () => this.editWordBank(i),
 			},
 			{
 				text: <Icon name="delete" size={25} color="white"/>,
 				backgroundColor: '#ff0000',
-				onPress: (i) => this.deleteWordBank(i),
+				onPress: () => this.deleteWordBank(i),
 				}]}
 				key={i}
 				onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
