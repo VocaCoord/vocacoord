@@ -97,7 +97,10 @@ export class VoiceDemo extends React.Component {
 		if(!oldString.includes(word))
 			newWords.push(word)
 	});
-	
+
+	for(let i = oldString.length; i < newString.length; i++)
+		newWords.push(newString[i])
+
 	//Looking in word bank[0] for testing purposes
 	console.log(newWords);
 	

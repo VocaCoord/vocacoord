@@ -123,7 +123,7 @@ export class ClassScreen extends React.Component {
   }
 
   componentWillUnmount() {
-	this.channel.unsubscribe()
+	this.props.navigation.getParam("channel").unsubscribe()
   }
 
   render() {
