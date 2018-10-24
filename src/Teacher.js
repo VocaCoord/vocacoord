@@ -52,8 +52,8 @@ export class CreateClass extends Component {
       <View style={styles.container}>
         <View style={styles.textboxes}>
           <TextInput
+		    style={{ marginBottom: 1 }}
             label="Classroom Name"
-			color="#ffa500"
             mode="outlined"
             value={this.state.className}
             onChangeText={className => this.setState({ className })}
