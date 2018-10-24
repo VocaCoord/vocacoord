@@ -14,7 +14,8 @@ export class WordBanks extends React.Component {
       showDialog: false,
       wordBankName: "",
       wordBanks: [],
-      message: 'Looking for your word banks...'
+      message: 'Looking for your word banks...',
+	  rowID: null
     };
     this.updateWords = this.updateWords.bind(this);
   }
@@ -93,23 +94,18 @@ export class WordBanks extends React.Component {
   deleteWordBank = index => {
 	const wordBanks = [...this.state.wordBanks];
 	wordBanks.splice(index, 1);
-	this.setState({ wordBanks });
+	this.setState({ wordBanks, rowID: null }, () => this.storeWordBanks());
   }
 
-  onSwipeOpen (rowIndex) {
-		this.setState({
-			rowIndex: rowIndex
-		})
+  onSwipeOpen (rowID) {
+		this.setState({ rowID })
 	}
-  onSwipeClose(rowIndex) {
-		if (rowIndex === this.state.rowIndex) {
-			this.setState({ rowIndex: null });
-		}
+  onSwipeClose(rowID) {
+		if (rowID === this.state.rowID) this.setState({ rowID: null });
 	}
   
   render() {
     const { navigate } = this.props.navigation;
-	var index = null;
     return (
       <View>
         <Dialog.Container visible={this.state.showDialog}>
@@ -130,24 +126,22 @@ export class WordBanks extends React.Component {
           this.state.wordBanks.length > 0 &&
           this.state.wordBanks.map((wordBank, i) => {
             return (
-			<Swipeout right={swipeoutBtns= [
+			<Swipeout right={[{
+				text: 'Edit'
+			},
 			{
 				text: 'Delete',
 				backgroundColor: '#ff0000',
-				onPress: () => this.deleteWordBank(i),
-				onOpen: ()=>(this.onSwipeOpen(i)),
-				close: this.state.rowIndex !== i,
-				onClose: ()=>(this.onSwipeClose(i)),
-				rowIndex: i,
-				autoClose: true
-
-			}
-			]
-			}
+				onPress: () => this.deleteWordBank(i)
+				}]}
+				key={i}
+				onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
+				close={this.state.rowID !== i}
+				onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
+				rowID={i}
 			>
 			<View>
               <ListItem
-                key={i}
                 title={wordBank.name}
                 subtitle={wordBank.createdAt ? wordBank.createdAt : null}
                 onPress={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
@@ -211,6 +205,20 @@ export class WordBank extends React.Component {
 
   closeDialog = () => this.setState({ showDialog: false, wordName: "" });
 
+  deleteWord = index => {
+	const words = [...this.state.words];
+	const updateWords = this.props.navigation.getParam('updateWords');
+	words.splice(index, 1);
+	this.setState({ words, rowID: null }, () => updateWords());
+  }
+
+  onSwipeOpen (rowID) {
+		this.setState({ rowID })
+	}
+  onSwipeClose(rowID) {
+		if (rowID === this.state.rowID) this.setState({ rowID: null });
+	}
+
   componentDidMount() {
     this.props.navigation.setParams({ openDialog: this.openDialog });
   }
@@ -235,11 +243,29 @@ export class WordBank extends React.Component {
         {
           this.state.words.length > 0 ? (
           this.state.words.map((word, i) => (
+		  ////
+			<Swipeout right={[{
+				text: 'Edit'
+			}
+			,{
+				text: 'Delete',
+				backgroundColor: '#ff0000',
+				onPress: () => this.deleteWord(i)
+				}]}
+				onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
+				close={this.state.rowID !== i}
+				onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
+				rowID={i}
+			>
+			<View>
             <ListItem
               key={i}
               title={word}
               hideChevron={true}
             />
+		</View>
+		</Swipeout>
+			//////
           ))
           ) : (
             <View style={styles.container}>
