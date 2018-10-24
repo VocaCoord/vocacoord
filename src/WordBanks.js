@@ -1,4 +1,5 @@
 import React from "react";
+import Swipeout from 'react-native-swipeout';
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { ListItem, Button, Icon } from "react-native-elements";
 import Dialog from "react-native-dialog";
@@ -89,9 +90,14 @@ export class WordBanks extends React.Component {
 
   closeDialog = () => this.setState({ showDialog: false, wordBankName: "" });
 
+  deleteWordBank = index => {
+	const wordBanks = [...this.state.wordBanks];
+	wordBanks.splice(index, 1);
+	this.setState({ wordBanks });
+  }
+  
   render() {
     const { navigate } = this.props.navigation;
-
     return (
       <View>
         <Dialog.Container visible={this.state.showDialog}>
@@ -112,19 +118,32 @@ export class WordBanks extends React.Component {
           this.state.wordBanks.length > 0 &&
           this.state.wordBanks.map((wordBank, i) => {
             return (
+			<Swipeout right={swipeoutBtns= [
+			{
+				text: 'Delete',
+				backgroundColor: '#ff0000',
+				onPress: () => this.deleteWordBank(i),
+				autoClose: 'true',
+			}
+			]
+			}
+			>
+			<View>
               <ListItem
                 key={i}
                 title={wordBank.name}
                 subtitle={wordBank.createdAt ? wordBank.createdAt : null}
-                onPressRightIcon={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
+                onPress={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
               />
+			  </View>
+			  </Swipeout>
             )
           })
         }
         {
           this.state.wordBanks.length == 0 &&
           <View style={styles.container}>
-            <Text>{this.state.message}</Text>
+            <Text>{this.state.message} </Text>
           </View>
         }
       </View>
