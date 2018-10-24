@@ -17,7 +17,8 @@ export class StudentScreen extends Component {
 
   connectToClass() {
     let classID = this.state.classID;
-    if (classID && classID.length === 4) {
+    console.log(`Student ClassID: ${classID}`);
+	if (classID && classID.length === 4) {
       this.setState({ loading: true });
 
       this.socket = new ClusterWS({
@@ -106,19 +107,23 @@ export class ClassScreen extends React.Component {
       words.unshift(word);
       this.setState({ words });
     });
-
+/*
     const testing = ["test", "test1", "test2", "test", "test2", "test3"];
     let idx = 0;
     (function publish() {
       channel.publish(testing[idx++]);
       if (idx < testing.length) setTimeout(publish, 2000);
-    })();
+    })();*/
   }
 
   componentWillMount() {
     this.props.navigation.addListener("didFocus", () =>
       this.props.navigation.getParam("callback")()
     );
+  }
+
+  componentWillUnmount() {
+	this.props.navigation.getParam("channel").unsubscribe()
   }
 
   render() {

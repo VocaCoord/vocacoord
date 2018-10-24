@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { Divider } from "react-native-elements";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
@@ -54,7 +55,7 @@ export class LoginScreen extends Component {
         {this.state.loading ? (
           <View>
             <Text>Hold on while we try to log you in...</Text>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large" color="#ffa500" />
           </View>
         ) : (
           <View style={styles.buttons}>
@@ -64,6 +65,7 @@ export class LoginScreen extends Component {
               value={this.state.email}
               onChangeText={email => this.setState({ email })}
             />
+			<Divider style={styles.fieldsDiv}/>
             <TextInput
               secureTextEntry={true}
               label="Password"
@@ -71,14 +73,16 @@ export class LoginScreen extends Component {
               value={this.state.password}
               onChangeText={password => this.setState({ password })}
             />
-            <Button mode="contained" onPress={() => this.authenticateUser()}>
-              Login
+			<Divider style={styles.fieldsButtonDiv}/>
+            <Button color="#ffa500" mode="contained" onPress={() => this.authenticateUser()}>
+              <Text style={styles.loginText}>Login</Text>
             </Button>
-            <Button mode="text" onPress={() => navigate("SignupScreen")}>
-              No account? Create one
+            <Button color="#ffa500" mode="text" onPress={() => navigate("SignupScreen")}>
+              <Text style={styles.noAccountText}>No account?</Text>
             </Button>
             <Button
               mode="contained"
+			  color="#ffa500"
               onPress={() =>
                 navigate("TeacherScreen", {
                   callback: this.isAuthenticated.bind(this)
@@ -104,5 +108,22 @@ const styles = StyleSheet.create({
   buttons: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  fieldsDiv: {
+	  height: "5%",
+	  backgroundColor: "#fff"
+  },
+  fieldsButtonDiv: {
+	  height: "10%",
+	  backgroundColor: "#fff"
+  },
+  loginText: {
+	  fontSize: 24,
+	  fontWeight: "bold"
+  },
+  noAccountText: {
+	  fontSize: 18,
+	  fontWeight: "bold",
+	  color: "black"
   }
 });

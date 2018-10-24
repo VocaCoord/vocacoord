@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { Button } from "react-native-paper";
 import Voice from "react-native-voice";
 import ClusterWS from "clusterws-client-js";
@@ -13,6 +13,11 @@ export class VoiceDemo extends React.Component {
     Voice.onSpeechEnd = this.onSpeechEndHandler.bind(this);
     Voice.onSpeechResults = this.onSpeechResultsHandler.bind(this);
     Voice.onSpeechPartialResults = this.onSpeechPartialResultsHandler.bind(this);
+	this.state = {
+		speechText: '',
+		wordBanks: [],
+		message: ''
+	}
   }
 
   componentDidMount() {
@@ -23,8 +28,8 @@ export class VoiceDemo extends React.Component {
       }
     }).then(res => res.json()).then(json => {
       let classID = json.classID;
-
-      this.socket = new ClusterWS({
+      console.log(`Voice ClassID: ${classID}`);
+	  this.socket = new ClusterWS({
         url: "wss://temp-vocacoord.herokuapp.com/"
       });
       this.socket.on('connect', () => {
@@ -43,6 +48,21 @@ export class VoiceDemo extends React.Component {
         this.channel.unsubscribe();
       });
     });
+
+	AsyncStorage.getItem('wordBanks')
+       .then(r => {
+		   if (r !== null) {
+			   const { wordBanks } = JSON.parse(r)
+			   this.setState({  wordBanks });
+           } else {
+			   const message = "Weird word bank error?"
+			   this.setState({ message });
+          }
+        })
+			.catch(e => {
+			console.log(e);
+        });
+
   }
 
   componentWillUnmount() {
@@ -59,11 +79,39 @@ export class VoiceDemo extends React.Component {
 
   onSpeechResultsHandler(e) {
     console.log('final voice results:', e)
+	this.toStudent((e.value[0]));
   }
 
   onSpeechPartialResultsHandler(e) {
     console.log('partial voice results:', e)
-    this.channel.publish(JSON.stringify(e));
+	this.toStudent(e.value[0]);
+  }
+
+  toStudent(newSpeechString){
+	const oldString = this.state.speechText.toLowerCase().split(' ')
+	const newString = newSpeechString.toLowerCase().split(' ')
+	let newWords = []
+	const wordbank = this.state.wordBanks[0].words.map(v => v.toLowerCase());
+
+	newString.forEach((word) => {
+		if(!oldString.includes(word))
+			newWords.push(word)
+	});
+
+	for(let i = oldString.length; i < newString.length; i++)
+		newWords.push(newString[i])
+
+	//Looking in word bank[0] for testing purposes
+	console.log(newWords);
+	
+	newWords.forEach((word) => {
+		if(wordbank.includes(word)){
+			this.channel.publish(word)
+			console.log(`Publishing ${word}`);
+		}
+	});
+
+	this.setState({ speechText: newSpeechString });
   }
 
   render() {
