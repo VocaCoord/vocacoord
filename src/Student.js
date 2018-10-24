@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
-import { ListItem } from "react-native-elements";
+import { ListItem, Divider } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
@@ -60,8 +60,8 @@ export class StudentScreen extends Component {
       <View style={styles.container}>
         {this.state.loading ? (
           <View>
-            <Text>Hold on while we try to connect you to the class...</Text>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <Text>Hold on while we try to connect you to the classroom...</Text>
+            <ActivityIndicator size="large" color="#ffa500" />
           </View>
         ) : (
           <View>
@@ -72,12 +72,14 @@ export class StudentScreen extends Component {
               value={this.state.classID}
               onChangeText={classID => this.setState({ classID })}
             />
+			<Divider style={styles.fieldDiv}/>
             <Button
+			  color="#ffa500"
               style={styles.buttons}
               mode="contained"
               onPress={() => this.connectToClass()}
             >
-              Connect
+              <Text style={styles.buttonText}>Connect</Text>
             </Button>
           </View>
         )}
@@ -157,7 +159,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center"
+    alignItems: "center",
+	justifyContent: "center"
   },
   buttons: {
     minWidth: "60%",
@@ -166,5 +169,14 @@ const styles = StyleSheet.create({
   textboxes: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  fieldDiv: {
+	  height: "10%",
+	  backgroundColor: "#fff"
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
   }
 });
