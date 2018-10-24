@@ -143,6 +143,7 @@ export class WordBanks extends React.Component {
 			<View>
               <ListItem
                 title={wordBank.name}
+				style={styles.wordBankStyle}
                 subtitle={wordBank.createdAt ? wordBank.createdAt : null}
                 onPress={() => navigate('WordBank', { wordBank, updateWords: this.updateWords })}
               />
@@ -286,5 +287,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
+  },
+  wordBankStyle: {
+	  backgroundColor: "#fff"
+  },
+  filler: {
+	  height: "50%",
+	  backgroundColor: "#fff"
   }
 });
