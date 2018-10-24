@@ -94,16 +94,26 @@ export class VoiceDemo extends React.Component {
 	let newWords = []
 	const wordbank = this.state.wordBanks[0].words.map(v => v.toLowerCase());
 
-	newString.forEach((word) => {
-		if(!oldString.includes(word))
-			newWords.push(word)
-	});
+//	newString.forEach((word) => {
+//		if(!oldString.includes(word))
+//			newWords.push(word)
+//	});
 
-	for(let i = oldString.length; i < newString.length; i++)
-		newWords.push(newString[i])
+//	for(let i = oldString.length; i < newString.length; i++)
+//		newWords.push(newString[i])
+
+	for(let i = 0; i < newString.length;i++){
+		if(i < oldString.length && !oldString.includes(newString[i])){
+			newWords.push(newString[i]);
+		}else if(i >= oldString.length){
+			newWords.push(newString[i]);
+		}
+	}
 
 	//Looking in word bank[0] for testing purposes
-	console.log(newWords);
+	console.log(`Old String: ${oldString}`);
+	console.log(`New String: ${newString}`);
+	console.log(`New words to potentially publish: ${newWords}`);
 	
 	newWords.forEach((word) => {
 		if(wordbank.includes(word)){
