@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { Divider } from "react-native-elements";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
@@ -44,18 +45,21 @@ export class SignupScreen extends Component {
             value={this.state.firstName}
             onChangeText={firstName => this.setState({ firstName })}
           />
+		  <Divider style={styles.fieldsDiv}/>
           <TextInput
             label="Last Name"
             mode="outlined"
             value={this.state.lastName}
             onChangeText={lastName => this.setState({ lastName })}
           />
+		  <Divider style={styles.fieldsDiv}/>
           <TextInput
             label="Email Address"
             mode="outlined"
             value={this.state.email}
             onChangeText={email => this.setState({ email })}
           />
+		  <Divider style={styles.fieldsDiv}/>
           <TextInput
             secureTextEntry={true}
             label="Password"
@@ -63,8 +67,9 @@ export class SignupScreen extends Component {
             value={this.state.password}
             onChangeText={password => this.setState({ password })}
           />
-          <Button mode="contained" onPress={() => this.createAccount()}>
-            Create Account
+		  <Divider style={styles.fieldsButtonDiv}/>
+          <Button color="#ffa500" mode="contained" onPress={() => this.createAccount()}>
+            <Text style={styles.buttonText}>Create Account</Text>
           </Button>
         </View>
       </View>
@@ -82,5 +87,18 @@ const styles = StyleSheet.create({
   buttons: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  fieldsDiv: {
+	  height: "5%",
+	  backgroundColor: "#fff"
+  },
+  fieldsButtonDiv: {
+	  height: "10%",
+	  backgroundColor: "#fff"
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
   }
 });
