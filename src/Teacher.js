@@ -101,7 +101,7 @@ export class ClassCreated extends Component {
     }).then(res => res.json()).then(json => this.setState({ classID: json.classID }));
 
     this.timeoutID = setTimeout(() => this.setState({ loading: false }), this.state.loadingDelay);
-	console.log(`Teacher ClassID: ${classID}`);
+	console.log(`Teacher ClassID: ${this.state.classID}`);
   }
 
   componentWillUnmount() {
