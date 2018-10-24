@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { Divider } from "react-native-elements";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
@@ -64,6 +65,7 @@ export class LoginScreen extends Component {
               value={this.state.email}
               onChangeText={email => this.setState({ email })}
             />
+			<Divider style={styles.fieldsDiv}/>
             <TextInput
               secureTextEntry={true}
               label="Password"
@@ -71,11 +73,12 @@ export class LoginScreen extends Component {
               value={this.state.password}
               onChangeText={password => this.setState({ password })}
             />
+			<Divider style={styles.fieldsButtonDiv}/>
             <Button mode="contained" onPress={() => this.authenticateUser()}>
-              Login
+              <Text style={styles.loginText}>Login</Text>
             </Button>
             <Button mode="text" onPress={() => navigate("SignupScreen")}>
-              No account? Create one
+              <Text style={styles.noAccountText}>No account?</Text>
             </Button>
             <Button
               mode="contained"
@@ -104,5 +107,21 @@ const styles = StyleSheet.create({
   buttons: {
     minWidth: "60%",
     maxWidth: "60%"
+  },
+  fieldsDiv: {
+	  height: "5%",
+	  backgroundColor: "#fff"
+  },
+  fieldsButtonDiv: {
+	  height: "10%",
+	  backgroundColor: "#fff"
+  },
+  loginText: {
+	  fontSize: 24,
+	  fontWeight: "bold"
+  },
+  noAccountText: {
+	  fontSize: 18,
+	  fontWeight: "bold"
   }
 });
