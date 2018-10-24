@@ -122,6 +122,10 @@ export class ClassScreen extends React.Component {
     );
   }
 
+  componentWillUnmount() {
+	this.channel.unsubscribe()
+  }
+
   render() {
     return (
       <View>
