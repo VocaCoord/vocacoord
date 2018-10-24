@@ -151,10 +151,13 @@ export class WordBank extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
+      headerTitle: <Text>{`${navigation.getParam('className')}/${navigation.getParam('classID')}`}</Text>,
       headerRight: (
-        <Button
+        <Icon
           onPress={navigation.getParam("openDialog")}
-          title="+"
+          name="add"
+          raised
+          reverse
         />
       )
     };
