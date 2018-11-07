@@ -1,14 +1,14 @@
-import { createStackNavigator } from 'react-navigation';
-import { HomeScreen } from './Home.js';
-import { LoginScreen } from './Login.js';
-import { SignupScreen } from './Signup.js';
-import { TeacherScreen, CreateClass, ExistingClass, ClassCreated } from './Teacher.js';
-import { VoiceDemo } from './VoiceDemo.js';
-import { StudentScreen, ClassScreen } from './Student.js';
-import { WordBanks, WordBank } from './WordBanks.js';
+import { createStackNavigator } from "react-navigation";
+import { HomeScreen } from "./Home.js";
+import LoginScreen from "./Login.js";
+import SignupScreen from "./Signup.js";
+import { CreateClass, ExistingClass, ClassCreated } from "./Teacher.js";
+import ClassroomScreen from "./Classrooms.js";
+import { VoiceDemo } from "./VoiceDemo.js";
+import { StudentScreen, ClassScreen } from "./Student.js";
+import { WordBanks, WordBank } from "./WordBanks.js";
 
-/* indention below represents the nested structure of components */
-export default AppNavigator = createStackNavigator(
+export default (AppNavigator = createStackNavigator(
   {
     HomeScreen: {
       screen: HomeScreen,
@@ -16,20 +16,20 @@ export default AppNavigator = createStackNavigator(
         header: null
       }
     },
-      LoginScreen,
-        SignupScreen,
-        TeacherScreen,
-          CreateClass,
-            ClassCreated,
-            VoiceDemo,
-            WordBanks,
-              WordBank,
-          ExistingClass,
-    
-      StudentScreen,
-		    ClassScreen,
+    LoginScreen,
+    SignupScreen,
+    ClassroomScreen,
+    CreateClass,
+    ClassCreated,
+    VoiceDemo,
+    WordBanks,
+    WordBank,
+    ExistingClass,
+
+    StudentScreen,
+    ClassScreen
   },
   {
-    initialRouteName: 'HomeScreen'
+    initialRouteName: "HomeScreen"
   }
-);
+));

@@ -19,7 +19,9 @@
   "dependencies": {
     "@babel/preset-react": "^7.0.0",
     "clusterws-client-js": "^3.0.6",
+    "dot-prop-immutable": "^1.5.0",
     "expo-cli": "^2.2.0",
+    "lodash": "^4.17.11",
     "npm": "^6.4.1",
     "react": "^16.5.2",
     "react-native": "^0.55.4",
@@ -30,7 +32,9 @@
     "react-native-vector-icons": "^4.6.0",
     "react-native-voice": "^0.2.6",
     "react-navigation": "^2.17.0",
-    "react-redux": "^5.0.7",
+    "react-redux": "^5.1.0",
+    "redux": "^4.0.1",
+    "uuid": "^3.3.2",
     "xdl": "^51.4.0"
   }
 }

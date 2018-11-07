@@ -5,29 +5,6 @@ import { Divider } from "react-native-elements";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
-export class TeacherScreen extends Component {
-  componentWillMount() {
-    this.props.navigation.addListener('didFocus', () => this.props.navigation.getParam('callback')());
-  }
-  
-  render() {
-    const { navigate } = this.props.navigation;
-    return (
-      <View style={styles.container}>
-        <View style={styles.buttons}>
-          <Button color="#ffa500" mode="contained" onPress={() => navigate("CreateClass")}>
-            <Text style={styles.buttonText}>Create a new classroom</Text>
-          </Button>
-		  <Divider style={styles.buttonDiv}/>
-          <Button color="#ffa500" mode="contained" onPress={() => navigate("ExistingClass")}>
-            <Text style={styles.buttonText}>Use an existing classroom</Text>
-          </Button>
-        </View>
-      </View>
-    );
-  }
-}
-
 export class CreateClass extends Component {
   constructor(props) {
     super(props);
@@ -52,24 +29,26 @@ export class CreateClass extends Component {
       <View style={styles.container}>
         <View style={styles.textboxes}>
           <TextInput
-		    style={{ marginBottom: 1 }}
+            style={{ marginBottom: 1 }}
             label="Classroom Name"
             mode="outlined"
             value={this.state.className}
             onChangeText={className => this.setState({ className })}
           />
-		  <Divider style={styles.createCRoomDiv}/>
+          <Divider style={styles.createCRoomDiv} />
           <Button
-			color="#ffa500"
+            color="#ffa500"
             mode="contained"
             disabled={!this.canSubmit}
-            onPress={() => navigate("ClassCreated", { className: this.state.className })}
+            onPress={() =>
+              navigate("ClassCreated", { className: this.state.className })
+            }
           >
             <Text style={styles.buttonText}>Create Classroom</Text>
           </Button>
-		  <Divider style={styles.createCRoomDiv}/>
+          <Divider style={styles.createCRoomDiv} />
           <Button
-			color="#ffa500"
+            color="#ffa500"
             mode="contained"
             disabled={!this.canSubmit}
             onPress={() => navigate("VoiceDemo")}
@@ -86,16 +65,16 @@ export class ClassCreated extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      className: props.navigation.getParam('className'),
+      className: props.navigation.getParam("className"),
       classID: null,
       loading: true,
       loadingDelay: 2500
-    }
+    };
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      headerTitle: <Text>{`${navigation.getParam('className')}`}</Text>
+      headerTitle: <Text>{`${navigation.getParam("className")}`}</Text>
     };
   };
 
@@ -105,10 +84,15 @@ export class ClassCreated extends Component {
       headers: {
         "Content-Type": "application/json"
       }
-    }).then(res => res.json()).then(json => this.setState({ classID: json.classID }));
+    })
+      .then(res => res.json())
+      .then(json => this.setState({ classID: json.classID }));
 
-    this.timeoutID = setTimeout(() => this.setState({ loading: false }), this.state.loadingDelay);
-	console.log(`Teacher ClassID: ${this.state.classID}`);
+    this.timeoutID = setTimeout(
+      () => this.setState({ loading: false }),
+      this.state.loadingDelay
+    );
+    console.log(`Teacher ClassID: ${this.state.classID}`);
   }
 
   componentWillUnmount() {
@@ -130,15 +114,20 @@ export class ClassCreated extends Component {
         ) : (
           <View>
             <Text style={styles.classroomText}>
-              Your classroom has been created with the following ID:  <Text style={styles.idText}>{this.state.classID}</Text>  
-			  
+              Your classroom has been created with the following ID:{" "}
+              <Text style={styles.idText}>{this.state.classID}</Text>
             </Text>
-			<Divider style={styles.buttonDiv}/>
+            <Divider style={styles.buttonDiv} />
             <Button
-		      color="#ffa500"
+              color="#ffa500"
               style={styles.buttons}
               mode="contained"
-              onPress={() => navigate("WordBanks", { classID: this.state.classID, className: this.state.className })}
+              onPress={() =>
+                navigate("WordBanks", {
+                  classID: this.state.classID,
+                  className: this.state.className
+                })
+              }
             >
               <Text style={styles.buttonText}>Go to your classroom</Text>
             </Button>
@@ -164,7 +153,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   buttons: {
     minWidth: "60%",
@@ -175,25 +164,25 @@ const styles = StyleSheet.create({
     maxWidth: "60%"
   },
   buttonText: {
-	  fontSize: 24,
-	  fontWeight: "bold",
-	  color: 'black'
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black"
   },
   buttonDiv: {
-	  height: "15%",
-	  backgroundColor: "#fff"
+    height: "15%",
+    backgroundColor: "#fff"
   },
   createCRoomDiv: {
-	  height: "10%",
-	  backgroundColor: "#fff"
+    height: "10%",
+    backgroundColor: "#fff"
   },
   classroomText: {
-	  fontSize: 18,
-	  color: 'black'
+    fontSize: 18,
+    color: "black"
   },
   idText: {
-	  fontSize: 18,
-	  fontWeight: "bold",
-	  color: 'black'
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black"
   }
 });
