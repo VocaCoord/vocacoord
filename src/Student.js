@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert, AppRegistry } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { ListItem, Divider } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
-
+import ViewMoreText from 'react-native-view-more-text';
+import {Image} from 'react-native' ;
 let api = "https://temp-vocacoord.herokuapp.com/api/";
 
 export class StudentScreen extends Component {
@@ -16,7 +17,8 @@ export class StudentScreen extends Component {
   }
 
   connectToClass() {
-    let classID = this.state.classID;
+   // let classID = this.state.classID;
+    let classID = 'AAAA';
     console.log(`Student ClassID: ${classID}`);
 	if (classID && classID.length === 4) {
       this.setState({ loading: true });
@@ -95,8 +97,10 @@ export class ClassScreen extends React.Component {
     const { navigation } = props;
     channel = navigation.getParam("channel");
     this.state = {
-      words: []
+      words: [],
+	  imgOpacity: 0
     };
+	this.toggleImage=this.toggleImage.bind(this);
     channel.watch(wordSaid => {
       console.log(`student heard this message: ${wordSaid}`);
       let words = [...this.state.words];
@@ -109,13 +113,13 @@ export class ClassScreen extends React.Component {
       words.unshift(word);
       this.setState({ words });
     });
-/*
+
     const testing = ["test", "test1", "test2", "test", "test2", "test3"];
     let idx = 0;
     (function publish() {
       channel.publish(testing[idx++]);
       if (idx < testing.length) setTimeout(publish, 2000);
-    })();*/
+    })();
   }
 
   componentWillMount() {
@@ -127,13 +131,31 @@ export class ClassScreen extends React.Component {
   componentWillUnmount() {
 	this.props.navigation.getParam("channel").unsubscribe()
   }
+  toggleImage() {
+    if (this.state.imgOpacity === 1 ) {
+      this.setState({
+		imgOpacity: 0
+    })
+    } else {
+	  this.setState({
+        imgOpacity: 1
+	  })
+    }
+   }
+
 
   render() {
     return (
-      <View>
+	<View>
         {this.state.words.length > 0 &&
           this.state.words.map((w, i) => {
+			  if(i%2===0){
+				url='https://pmchollywoodlife.files.wordpress.com/2018/01/kanye-west-smiling-spl-ftr.jpg?w=412'
+			  }else{
+				url='https://i.imgur.com/0p7RZIG.jpg'
+			  }
             return (
+			<View>
               <ListItem
                 key={i}
                 title={w.word}
@@ -147,10 +169,20 @@ export class ClassScreen extends React.Component {
                   fontSize: 24
                 }}
                 hideChevron={true}
-              />
-            );
+				/>
+				<Button
+					onPress={ this.toggleImage}
+				>
+					<Text>image</Text>
+				</Button>
+				<Image 
+				style={{width: 100, height: 100, opacity: this.state.imgOpacity}}
+				source={{uri: url}}
+				/>
+				</View>
+			);
           })}
-      </View>
+	</View>
     );
   }
 }
