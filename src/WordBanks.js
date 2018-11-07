@@ -3,7 +3,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Swipeout from 'react-native-swipeout';
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
-import { ListItem, Button, Icon } from "react-native-elements";
+import { ListItem, Button, Icon, Divider } from "react-native-elements";
 import Dialog from "react-native-dialog";
 
 export class WordBanks extends React.Component {
@@ -117,7 +117,7 @@ export class WordBanks extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View>
+      <View style={styles.background}>
         <Dialog.Container visible={this.state.showDialog}>
           <Dialog.Input
             label="Word Bank Name"
@@ -236,8 +236,9 @@ export class WordBank extends React.Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     return (
-      <View>
+      <View style={styles.background}>
         <Dialog.Container visible={this.state.showDialog}>
           <Dialog.Input
             label="Word Name"
@@ -286,22 +287,47 @@ export class WordBank extends React.Component {
             </View>
           )
         }
+		<View style={styles.micButton}>
+            <Icon name="mic"
+            onPress={() => navigate("VoiceDemo")}
+				raised
+				reverse
+				size={50}
+				/>
+		  </View>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  background: {
+	  backgroundColor: "#fff",
+	  flex: 1
+  },
   container: {
     backgroundColor: "#fff",
+	flexGrow: 1,
     alignItems: "center",
     justifyContent: "center"
   },
-  wordBankStyle: {
-	  backgroundColor: "#fff"
+  bottomView: {
+	  backgroundColor: "#fff",
+	  flex: 1
   },
   filler: {
 	  height: "50%",
 	  backgroundColor: "#fff"
-  }
+  },
+  buttonText: {
+	  fontSize: 24,
+	  fontWeight: "bold",
+	  color: 'black'
+  },
+  micButton: {
+	  flexDirection: 'row-reverse',
+	  alignSelf: 'flex-end',
+	  bottom: 0,
+	  position: 'absolute'
+  },
 });
