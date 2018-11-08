@@ -1,56 +1,46 @@
-import React from "react";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
-import IonIcon from "react-native-vector-icons/Ionicons";
+import React, { Component } from "react";
 import Swipeout from "react-native-swipeout";
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import { ListItem, Button, Icon, Divider } from "react-native-elements";
 import Dialog from "react-native-dialog";
+import { connect } from "react-redux";
+import { addBank, editBank, removeBank } from "./actions/index.js";
 
-export class WordBanks extends React.Component {
+class WordBanks extends Component {
   constructor(props) {
     super(props);
     this.state = {
       className: props.navigation.getParam("className"),
-      classID: props.navigation.getParam("classID"),
-      wordBankID: 0,
-      showDialog: false,
-      wordBankName: "",
-      wordBanks: [],
-      message: "Looking for your word banks...",
+      classCode: props.navigation.getParam("classCode"),
+      classId: props.navigation.getParam("classId"),
+      addingDialog: false,
+      currentWordBank: {},
+      editingDialog: false,
+      newWordBankName: "",
       rowID: null
     };
-    this.updateWords = this.updateWords.bind(this);
+    this.handleWordBankAdd = this.handleWordBankAdd.bind(this);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
+    this.handleWordBankStartEdit = this.handleWordBankStartEdit.bind(this);
+    this.handleWordBankEdit = this.handleWordBankEdit.bind(this);
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ openDialog: this.openDialog });
-
-    AsyncStorage.getItem("wordBanks")
-      .then(r => {
-        if (r !== null) {
-          const { wordBankID, wordBanks } = JSON.parse(r);
-          this.setState({ wordBankID, wordBanks });
-        } else {
-          const message =
-            "It looks like you haven't added a word bank yet,\nclick the + above to start adding word banks";
-          this.setState({ message });
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    this.props.navigation.setParams({
+      handleDialogOpen: this.handleDialogOpen
+    });
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
       headerTitle: (
-        <Text>{`${navigation.getParam("className")}/${navigation.getParam(
-          "classID"
+        <Text>{`${navigation.getParam("classCode")}/${navigation.getParam(
+          "className"
         )}`}</Text>
       ),
       headerRight: (
         <Icon
-          onPress={navigation.getParam("openDialog")}
+          onPress={navigation.getParam("handleDialogOpen")}
           name="add"
           raised
           reverse
@@ -59,49 +49,38 @@ export class WordBanks extends React.Component {
     };
   };
 
-  addWordBank = name => {
-    const date = new Date();
-    const dateString = `Created on ${date.getDate()}/${date.getMonth() +
-      1}/${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`;
-    const wordBankID = this.state.wordBankID + 1;
-    const wordBank = {
-      id: wordBankID,
-      name: name,
-      createdAt: dateString,
-      words: []
-    };
-    wordBanks = this.state.wordBanks;
-    wordBanks.unshift(wordBank);
-    this.setState({ wordBanks, wordBankID }, () => this.storeWordBanks());
-    this.closeDialog();
-  };
-
-  storeWordBanks = async () => {
-    await AsyncStorage.setItem("wordBanks", JSON.stringify(this.state)).catch(
-      e => console.log(e)
+  handleWordBankAdd() {
+    this.props.dispatch(
+      addBank(this.state.classId, this.state.newWordBankName)
     );
-  };
+    this.setState({ addingDialog: false, newWordBankName: "" });
+  }
+  handleWordBankStartEdit(currentWordBank) {
+    this.setState({ editingDialog: true, currentWordBank });
+  }
 
-  updateWords = (id, words) => {
-    let wordBanks = this.state.wordBanks;
-    for (let i in wordBanks) {
-      if (wordBanks[i].id === id) {
-        wordBanks[i].words = words;
-        this.setState({ wordBanks }, () => this.storeWordBanks());
-        return;
-      }
-    }
-  };
+  handleWordBankEdit() {
+    const id = this.state.currentWordBank.id,
+      name = this.state.newWordBankName;
+    this.props.dispatch(editBank(id, name));
+    this.setState({ editingDialog: false });
+  }
 
-  openDialog = () => this.setState({ showDialog: true });
+  handleWordBankRemove(wordBank) {
+    const { classId, id } = wordBank;
+    this.props.dispatch(removeBank(classId, id));
+  }
 
-  closeDialog = () => this.setState({ showDialog: false, wordBankName: "" });
+  handleDialogOpen = () => this.setState({ addingDialog: true });
 
-  deleteWordBank = index => {
-    const wordBanks = [...this.state.wordBanks];
-    wordBanks.splice(index, 1);
-    this.setState({ wordBanks, rowID: null }, () => this.storeWordBanks());
-  };
+  handleDialogClose() {
+    this.setState({
+      addingDialog: false,
+      dialogError: false,
+      editingDialog: false,
+      newWordBankName: ""
+    });
+  }
 
   onSwipeOpen(rowID) {
     this.setState({ rowID });
@@ -109,44 +88,50 @@ export class WordBanks extends React.Component {
   onSwipeClose(rowID) {
     if (rowID === this.state.rowID) this.setState({ rowID: null });
   }
-  editWordBank = index => {
-    const wordBanks = [...this.state.wordBanks];
-    console.log(index);
-    this.setState({ showDialog: true });
-    wordBanks[0].name = "Frisco";
-    this.setState({ wordBanks, showDialog: false }, () =>
-      this.storeWordBanks()
-    );
-  };
 
   render() {
     const { navigate } = this.props.navigation;
+    const { navigation } = this.props;
+    const { wordbanks, classrooms } = this.props;
+    const classroom = this.state.classId;
+    const wordBankIds = classrooms[classroom]
+      ? classrooms[classroom].wordbanks
+      : [];
+    const wordBankList = wordBankIds.map(Id => {
+      return wordbanks[Id];
+    });
+
     return (
       <View style={styles.background}>
         <Dialog.Container visible={this.state.showDialog}>
           <Dialog.Input
             label="Word Bank Name"
-            onChangeText={wordBankName => this.setState({ wordBankName })}
+            onChangeText={newWordBankName => this.setState({ newWordBankName })}
           />
-          <Dialog.Button label="Cancel" onPress={() => this.closeDialog()} />
-          <Dialog.Button
-            label="Okay"
-            onPress={() => this.addWordBank(this.state.wordBankName)}
-          />
+          <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
+          <Dialog.Button label="Add" onPress={this.handleWordBankAdd} />
         </Dialog.Container>
-        {this.state.wordBanks.length > 0 &&
-          this.state.wordBanks.map((wordBank, i) => {
+        <Dialog.Container visible={this.state.editingDialog}>
+          <Dialog.Input
+            label="Word Bank Name"
+            onChangeText={newWordBankName => this.setState({ newWordBankName })}
+          />
+          <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
+          <Dialog.Button label="Change" onPress={this.handleWordBankEdit} />
+        </Dialog.Container>
+        {wordBankList.length > 0 &&
+          wordBankList.map((wordBank, i) => {
             return (
               <Swipeout
                 right={[
                   {
                     text: <Icon name="edit" size={25} color="white" />,
-                    onPress: () => this.editWordBank(i)
+                    onPress: () => this.handleWordBankStartEdit(wordBank)
                   },
                   {
                     text: <Icon name="delete" size={25} color="white" />,
                     backgroundColor: "#ff0000",
-                    onPress: () => this.deleteWordBank(i)
+                    onPress: () => this.handleWordBankRemove(wordBank)
                   }
                 ]}
                 key={i}
@@ -159,11 +144,13 @@ export class WordBanks extends React.Component {
                   <ListItem
                     title={wordBank.name}
                     style={styles.wordBankStyle}
-                    subtitle={wordBank.createdAt ? wordBank.createdAt : null}
                     onPress={() =>
                       navigate("WordBank", {
-                        wordBank,
-                        updateWords: this.updateWords
+                        className: navigation.getParam("className"),
+                        classCode: navigation.getParam("classCode"),
+                        classId: navigation.getParam("classId"),
+                        wordBankName: wordBank.name,
+                        wordBankId: wordBank.id
                       })
                     }
                   />
@@ -171,7 +158,7 @@ export class WordBanks extends React.Component {
               </Swipeout>
             );
           })}
-        {this.state.wordBanks.length == 0 && (
+        {wordBankList.length === 0 && (
           <View style={styles.container}>
             <Text>{this.state.message}</Text>
           </View>
@@ -320,3 +307,12 @@ const styles = StyleSheet.create({
 	  backgroundColor: "#fff"
   }
 });
+
+const mapStateToProps = state => {
+  return {
+    classrooms: state.userData.classrooms,
+    wordbanks: state.userData.wordbanks
+  };
+};
+
+export default connect(mapStateToProps)(WordBanks);

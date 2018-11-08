@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { StyleSheet, View, Text } from "react-native";
 import { ListItem, Icon } from "react-native-elements";
 import { connect } from "react-redux";
 import Swipeout from "react-native-swipeout";
@@ -14,10 +13,14 @@ class ClassroomScreen extends Component {
     super(props);
     this.state = {
       addingDialog: false,
+      currentClass: {},
+      editingDialog: false,
       rowId: null
     };
     this.handleClassroomAdd = this.handleClassroomAdd.bind(this);
     this.handleDialogClose = this.handleDialogClose.bind(this);
+    this.handleClassroomStartEdit = this.handleClassroomStartEdit.bind(this);
+    this.handleClassroomEdit = this.handleClassroomEdit.bind(this);
   }
 
   componentWillMount() {
@@ -48,7 +51,12 @@ class ClassroomScreen extends Component {
   handleDialogOpen = () => this.setState({ addingDialog: true });
 
   handleDialogClose = () =>
-    this.setState({ addingDialog: false, newClassName: "" });
+    this.setState({
+      addingDialog: false,
+      newClassName: "",
+      editingDialog: false,
+      rowId: null
+    });
 
   handleClassroomAdd() {
     this.setState({ addingDialog: false });
@@ -69,7 +77,17 @@ class ClassroomScreen extends Component {
       });
   }
 
-  handleClassroomEdit(classroom) {}
+  handleClassroomStartEdit(currentClass) {
+    this.setState({ editingDialog: true, currentClass });
+  }
+
+  handleClassroomEdit() {
+    const id = this.state.currentClass.id,
+      name = this.state.newClassName;
+    this.props.dispatch(editClass(id, name));
+
+    this.setState({ editingDialog: false });
+  }
 
   handleClassroomRemove(classroom) {
     this.props.dispatch(removeClass(classroom.id));
@@ -98,15 +116,22 @@ class ClassroomScreen extends Component {
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Add" onPress={this.handleClassroomAdd} />
         </Dialog.Container>
+        <Dialog.Container visible={this.state.editingDialog}>
+          <Dialog.Input
+            label="Classroom Name"
+            onChangeText={newClassName => this.setState({ newClassName })}
+          />
+          <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
+          <Dialog.Button label="Change" onPress={this.handleClassroomEdit} />
+        </Dialog.Container>
         {classList.length > 0 &&
           classList.map((classroom, i) => {
-            console.log(classroom, classroom.name);
             return (
               <Swipeout
                 right={[
                   {
                     text: <Icon name="edit" size={25} color="white" />,
-                    onPress: () => this.handleClassroomEdit(classroom)
+                    onPress: () => this.handleClassroomStartEdit(classroom)
                   },
                   {
                     text: <Icon name="delete" size={25} color="white" />,
@@ -124,7 +149,13 @@ class ClassroomScreen extends Component {
                   <ListItem
                     title={classroom.name}
                     style={styles.wordBankStyle}
-                    onPress={() => navigate("WordBanks")}
+                    onPress={() =>
+                      navigate("WordBanks", {
+                        className: classroom.name,
+                        classCode: classroom.code,
+                        classId: classroom.id
+                      })
+                    }
                   />
                 </View>
               </Swipeout>
@@ -133,9 +164,9 @@ class ClassroomScreen extends Component {
         {classList.length === 0 && (
           <View style={styles.container}>
             <Text>
-              It looks like you haven't any classrooms yet,
+              It looks like you haven't added any classrooms yet,
               {"\n"}
-              click the + below to start adding classrooms
+              click the + above to start adding classrooms
             </Text>
           </View>
         )}
