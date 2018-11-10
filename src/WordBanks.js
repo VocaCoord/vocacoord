@@ -168,143 +168,23 @@ class WordBanks extends Component {
   }
 }
 
-export class WordBank extends React.Component {
-  constructor(props) {
-    super(props);
-    const { navigation } = props;
-    const { id, name, createdAt, words } = navigation.getParam("wordBank");
-
-    this.state = {
-      id,
-      name,
-      createdAt,
-      words,
-      wordName: "",
-      showDialog: false
-    };
-  }
-
-  static navigationOptions = ({ navigation }) => {
-    return {
-      headerRight: (
-        <Icon
-          onPress={navigation.getParam("openDialog")}
-          name="add"
-          raised
-          reverse
-        />
-      )
-    };
-  };
-
-  addWord = (id, word) => {
-    const updateWords = this.props.navigation.getParam("updateWords");
-    words = this.state.words;
-    words.unshift(word);
-    updateWords(id, words);
-    this.setState({ words });
-    this.closeDialog();
-  };
-
-  openDialog = () => this.setState({ showDialog: true });
-
-  closeDialog = () => this.setState({ showDialog: false, wordName: "" });
-
-  deleteWord = index => {
-    const words = [...this.state.words];
-    const updateWords = this.props.navigation.getParam("updateWords");
-    words.splice(index, 1);
-    this.setState({ words, rowID: null }, () => updateWords());
-  };
-
-  onSwipeOpen(rowID) {
-    this.setState({ rowID });
-  }
-  onSwipeClose(rowID) {
-    if (rowID === this.state.rowID) this.setState({ rowID: null });
-  }
-
-  componentDidMount() {
-    this.props.navigation.setParams({ openDialog: this.openDialog });
-  }
-
-  render() {
-    const { navigate } = this.props.navigation;
-    return (
-      <View style={styles.background}>
-        <Dialog.Container visible={this.state.showDialog}>
-          <Dialog.Input
-            label="Word Name"
-            onChangeText={wordName => this.setState({ wordName })}
-          />
-          <Dialog.Button label="Cancel" onPress={() => this.closeDialog()} />
-          <Dialog.Button
-            label="Okay"
-            onPress={() => this.addWord(this.state.id, this.state.wordName)}
-          />
-        </Dialog.Container>
-        {this.state.words.length > 0 ? (
-          this.state.words.map((word, i) => (
-            <Swipeout
-              right={[
-                {
-                  text: <Icon name="edit" size={25} color="white" />
-                },
-                {
-                  text: <Icon name="delete" size={25} color="white" />,
-                  backgroundColor: "#ff0000",
-                  onPress: () => this.deleteWord(i)
-                }
-              ]}
-              onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
-              close={this.state.rowID !== i}
-              onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
-              rowID={i}
-            >
-              <View>
-                <ListItem key={i} title={word} hideChevron={true} />
-              </View>
-            </Swipeout>
-          ))
-          ) : (
-            <View style={styles.container}>
-              <Text>
-                It looks like you haven't any words yet, {"\n"}
-                click the + above to start adding words
-              </Text>
-            </View>
-          )
-        }
-		<View style={styles.micButton}>
-            <Icon name="mic"
-            onPress={() => navigate("VoiceDemo")}
-				raised
-				reverse
-				size={50}
-				/>
-		  </View>
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   background: {
-	  backgroundColor: "#fff",
-	  flex: 1
+    backgroundColor: "#fff",
+    flex: 1
   },
   container: {
     backgroundColor: "#fff",
-	flexGrow: 1,
+    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center"
   },
   wordBankStyle: {
-	  backgroundColor: "#fff"
+    backgroundColor: "#fff"
   },
   filler: {
-	  height: "50%",
-	  backgroundColor: "#fff"
+    height: "50%",
+    backgroundColor: "#fff"
   }
 });
 
