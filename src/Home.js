@@ -10,10 +10,10 @@ export class HomeScreen extends Component {
       <View style={styles.container}>
         <Divider style={styles.topSpace} />
         <Image
-          style={styles.logoStyle}
+          style={styles.logo}
           source={require("./assets/images/VCLogo.png")}
         />
-        <Divider style={styles.logoButtonDiv} />
+        <Divider style={styles.buttonDivider} />
         <View style={styles.buttons}>
           <Button
             mode="contained"
@@ -58,11 +58,8 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: "bold"
   },
-  logoStyle: {
+  logo: {
     width: "40%",
     height: "25%"
-  },
-  logoButtonDiv: {
-    height: "20%"
   }
 });

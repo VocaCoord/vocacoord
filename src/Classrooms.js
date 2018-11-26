@@ -71,9 +71,7 @@ class ClassroomScreen extends Component {
         const code = json.classID,
           name = this.state.newClassName;
         this.props.dispatch(addClass(code, name));
-        this.setState({
-          newClassName: ""
-        });
+        this.handleDialogClose();
       });
   }
 
@@ -86,7 +84,7 @@ class ClassroomScreen extends Component {
       name = this.state.newClassName;
     this.props.dispatch(editClass(id, name));
 
-    this.setState({ editingDialog: false });
+    this.handleDialogClose();
   }
 
   handleClassroomRemove(classroom) {
@@ -107,7 +105,7 @@ class ClassroomScreen extends Component {
     const classList = Object.keys(classrooms).map(key => classrooms[key]);
 
     return (
-      <View>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <Dialog.Container visible={this.state.addingDialog}>
           <Dialog.Input
             label="Classroom Name"
@@ -142,13 +140,14 @@ class ClassroomScreen extends Component {
                 key={i}
                 onOpen={(sectionId, rowId) => this.onSwipeOpen(rowId)}
                 close={this.state.rowId !== i}
+                autoClose={true}
                 onClose={(sectionId, rowId) => this.onSwipeClose(rowId)}
                 rowID={i}
               >
                 <View>
                   <ListItem
                     title={classroom.name}
-                    style={styles.wordBankStyle}
+                    containerStyle={{ backgroundColor: "#fff" }}
                     onPress={() =>
                       navigate("WordBanks", {
                         className: classroom.name,
@@ -166,7 +165,7 @@ class ClassroomScreen extends Component {
             <Text>
               It looks like you haven't added any classrooms yet,
               {"\n"}
-              click the + above to start adding classrooms
+              click the + above to add some.
             </Text>
           </View>
         )}
@@ -176,13 +175,14 @@ class ClassroomScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  background: {
+    backgroundColor: "#fff",
+    flex: 1
+  },
   container: {
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center"
-  },
-  wordBankStyle: {
-    backgroundColor: "#fff"
   },
   filler: {
     height: "50%",

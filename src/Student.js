@@ -10,44 +10,41 @@ export class StudentScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      classId: null || "AAAA",
+      classCode: "",
       isConnecting: false,
-      classIdError: false
+      classCodeError: false
     };
   }
 
   connectToClass() {
-    if (!this.validateClassId()) return;
+    if (!this.validateClassCode()) return;
 
-    let classId = this.state.classId;
+    let { classCode } = this.state;
 
-    if (classId && classId.length === 4) {
-      this.setState({ isConnecting: true, classIdError: false });
+    this.setState({ isConnecting: true, classCodeError: false });
 
-      this.socket = new ClusterWS({
-        url: "wss://temp-vocacoord.herokuapp.com/"
-      });
-      this.socket.on("connect", () => {
-        console.log("connected to the socket");
-        this.channel = this.socket.subscribe(classId);
-        const { navigate } = this.props.navigation;
-        setTimeout(
-          () =>
-            navigate("ClassScreen", {
-              channel: this.channel,
-              callback: this.isConnected.bind(this)
-            }),
-          3000
-        );
-      });
-      this.socket.on("error", err => {
-        console.error("error: ", err);
-      });
-      this.socket.on("disconnect", (code, reason) => {
-        console.log(`disconnected with code ${code} and reason ${reason}`);
-        this.channel.unsubscribe();
-      });
-    }
+    this.socket = new ClusterWS({
+      url: "wss://temp-vocacoord.herokuapp.com/"
+    });
+    this.socket.on("connect", () => {
+      this.channel = this.socket.subscribe(classCode.toUpperCase());
+      const { navigate } = this.props.navigation;
+      setTimeout(
+        () =>
+          navigate("ClassScreen", {
+            channel: this.channel,
+            callback: this.isConnected.bind(this)
+          }),
+        3000
+      );
+    });
+    this.socket.on("error", err => {
+      console.error("error: ", err);
+    });
+    this.socket.on("disconnect", (code, reason) => {
+      console.log(`disconnected with code ${code} and reason ${reason}`);
+      this.channel.unsubscribe();
+    });
   }
 
   isConnected() {
@@ -58,12 +55,12 @@ export class StudentScreen extends Component {
     if (this.socket) this.socket.disconnect();
   }
 
-  validateClassId() {
-    let classId = this.state.classId,
-      classIdError = false;
-    if (!classId || classId.length !== 4) classIdError = true;
-    this.setState({ classIdError });
-    return !classIdError;
+  validateClassCode() {
+    let { classCode } = this.state,
+      classCodeError = false;
+    if (!classCode || classCode.length !== 4) classCodeError = true;
+    this.setState({ classCodeError });
+    return !classCodeError;
   }
 
   render() {
@@ -77,19 +74,19 @@ export class StudentScreen extends Component {
         ) : (
           <View>
             <TextInput
-              onBlur={this.validateClassId}
+              onBlur={this.validateClassCode}
               style={styles.textbox}
-              label="Class ID"
+              label="Class Code"
               mode="outlined"
-              value={this.state.classId}
-              onChangeText={classId =>
-                this.setState({ classId }, () => {
-                  if (this.state.classIdError) this.validateClassId();
-                })
-              }
-              error={this.state.classIdError}
+              value={this.state.classCode}
+              onChangeText={classCode => {
+                this.setState({ classCode }, () => {
+                  if (this.state.classCodeError) this.validateClassCode();
+                });
+              }}
+              error={this.state.classCodeError}
             />
-            <HelperText type="error" visible={this.state.classIdError}>
+            <HelperText type="error" visible={this.state.classCodeError}>
               Classroom codes must be exactly 4 characters long.
             </HelperText>
             <Divider style={styles.divider} />

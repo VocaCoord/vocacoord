@@ -1,3 +1,4 @@
+import { AsyncStorage } from "react-native";
 let apiURL = "https://temp-vocacoord.herokuapp.com/api/";
 
 export const loadState = () => {
@@ -14,9 +15,7 @@ export const saveState = state => {
   try {
     const serializedState = JSON.stringify(state);
     AsyncStorage.setItem("state", serializedState);
-    console.log("saving state", state);
     if (state.userData.user && state.userData.user.email) {
-      console.log(state.userData);
       fetch(apiURL + "sync", {
         method: "POST",
         headers: {
@@ -33,6 +32,6 @@ export const saveState = state => {
       });
     }
   } catch (err) {
-    //ignore errors for now
+    // ignore errors for now
   }
 };
