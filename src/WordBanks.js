@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Swipeout from "react-native-swipeout";
-import { View, Text, StyleSheet, AsyncStorage } from "react-native";
-import { ListItem, Button, Icon, Divider } from "react-native-elements";
+import { View, Text, StyleSheet } from "react-native";
+import { ListItem, Icon } from "react-native-elements";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 import { addBank, editBank, removeBank } from "./actions/index.js";
@@ -53,7 +53,7 @@ class WordBanks extends Component {
     this.props.dispatch(
       addBank(this.state.classId, this.state.newWordBankName)
     );
-    this.setState({ addingDialog: false, newWordBankName: "" });
+    this.handleDialogClose();
   }
   handleWordBankStartEdit(currentWordBank) {
     this.setState({ editingDialog: true, currentWordBank });
@@ -63,7 +63,7 @@ class WordBanks extends Component {
     const id = this.state.currentWordBank.id,
       name = this.state.newWordBankName;
     this.props.dispatch(editBank(id, name));
-    this.setState({ editingDialog: false });
+    this.handleDialogClose();
   }
 
   handleWordBankRemove(wordBank) {
@@ -102,8 +102,8 @@ class WordBanks extends Component {
     });
 
     return (
-      <View style={styles.background}>
-        <Dialog.Container visible={this.state.showDialog}>
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <Dialog.Container visible={this.state.addingDialog}>
           <Dialog.Input
             label="Word Bank Name"
             onChangeText={newWordBankName => this.setState({ newWordBankName })}
@@ -137,13 +137,14 @@ class WordBanks extends Component {
                 key={i}
                 onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
                 close={this.state.rowID !== i}
+                autoClose={true}
                 onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
                 rowID={i}
               >
                 <View>
                   <ListItem
                     title={wordBank.name}
-                    style={styles.wordBankStyle}
+                    containerStyle={{ backgroundColor: "#fff" }}
                     onPress={() =>
                       navigate("WordBank", {
                         className: navigation.getParam("className"),
@@ -160,7 +161,11 @@ class WordBanks extends Component {
           })}
         {wordBankList.length === 0 && (
           <View style={styles.container}>
-            <Text>{this.state.message}</Text>
+            <Text>
+              It looks like you haven't added any wordbanks yet,
+              {"\n"}
+              click the + above to add some.
+            </Text>
           </View>
         )}
       </View>
@@ -175,12 +180,8 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "#fff",
-    flexGrow: 1,
     alignItems: "center",
     justifyContent: "center"
-  },
-  wordBankStyle: {
-    backgroundColor: "#fff"
   },
   filler: {
     height: "50%",

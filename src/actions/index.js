@@ -2,7 +2,6 @@ export const CLASS_REQUEST = "CLASS_REQUEST";
 export const CLASS_SUCCESS = "CLASS_SUCCESS";
 export const CLASS_FAILURE = "CLASS_FAILURE";
 
-/* works */
 export const addClass = (code, name) => {
   return {
     type: "ADD_CLASS",
@@ -10,7 +9,6 @@ export const addClass = (code, name) => {
   };
 };
 
-/* works */
 export const editClass = (id, name) => {
   return {
     type: "EDIT_CLASS",
@@ -18,7 +16,6 @@ export const editClass = (id, name) => {
   };
 };
 
-/* works */
 export const removeClass = id => {
   return {
     type: "REMOVE_CLASS",
@@ -26,7 +23,6 @@ export const removeClass = id => {
   };
 };
 
-/* works */
 export const addBank = (classId, name) => {
   return {
     type: "ADD_BANK",
@@ -34,7 +30,6 @@ export const addBank = (classId, name) => {
   };
 };
 
-/* works */
 export const editBank = (id, name) => {
   return {
     type: "EDIT_BANK",
@@ -42,7 +37,6 @@ export const editBank = (id, name) => {
   };
 };
 
-/* works */
 export const removeBank = (classId, id) => {
   return {
     type: "REMOVE_BANK",
@@ -50,7 +44,6 @@ export const removeBank = (classId, id) => {
   };
 };
 
-/* TODO */
 export const addWord = (wordBankId, word) => {
   return {
     type: "ADD_WORD",
@@ -58,7 +51,6 @@ export const addWord = (wordBankId, word) => {
   };
 };
 
-/* TODO */
 export const editWord = (id, word) => {
   return {
     type: "EDIT_WORD",
@@ -66,7 +58,6 @@ export const editWord = (id, word) => {
   };
 };
 
-/* TODO */
 export const removeWord = (wordBankId, id) => {
   return {
     type: "REMOVE_WORD",

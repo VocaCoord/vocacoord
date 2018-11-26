@@ -3,6 +3,8 @@ package com.vocacoord;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
+import com.bugsnag.BugsnagReactNative;
 import com.wenkesj.voice.VoicePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImagePickerPackage(),
+            BugsnagReactNative.getPackage(),
             new VoicePackage(),
             new VectorIconsPackage()
       );
