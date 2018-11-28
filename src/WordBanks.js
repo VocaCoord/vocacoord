@@ -14,15 +14,12 @@ class WordBanks extends Component {
       classCode: props.navigation.getParam("classCode"),
       classId: props.navigation.getParam("classId"),
       addingDialog: false,
-      currentWordBank: {},
+      currentWordBank: {
+        name: ""
+      },
       editingDialog: false,
-      newWordBankName: "",
-      rowID: null
+      rowId: null
     };
-    this.handleWordBankAdd = this.handleWordBankAdd.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
-    this.handleWordBankStartEdit = this.handleWordBankStartEdit.bind(this);
-    this.handleWordBankEdit = this.handleWordBankEdit.bind(this);
   }
 
   componentDidMount() {
@@ -49,45 +46,58 @@ class WordBanks extends Component {
     };
   };
 
-  handleWordBankAdd() {
-    this.props.dispatch(
-      addBank(this.state.classId, this.state.newWordBankName)
-    );
-    this.handleDialogClose();
-  }
-  handleWordBankStartEdit(currentWordBank) {
-    this.setState({ editingDialog: true, currentWordBank });
-  }
+  handleWordBankAdd = () => {
+    if (this.state.currentWordBank.name === "")
+      return this.setState({ dialogError: true });
 
-  handleWordBankEdit() {
-    const id = this.state.currentWordBank.id,
-      name = this.state.newWordBankName;
+    const { classId, currentWordBank } = this.state;
+
+    this.props.dispatch(addBank(classId, currentWordBank.name));
+    this.handleDialogClose();
+  };
+
+  handleWordBankStartEdit = currentWordBank => {
+    this.setState({
+      editingDialog: true,
+      currentWordBank: { ...currentWordBank }
+    });
+  };
+
+  handleWordBankEdit = () => {
+    const { id, name } = this.state.currentWordBank;
+
     this.props.dispatch(editBank(id, name));
     this.handleDialogClose();
-  }
+  };
 
-  handleWordBankRemove(wordBank) {
+  handleWordBankRemove = wordBank => {
     const { classId, id } = wordBank;
     this.props.dispatch(removeBank(classId, id));
-  }
+  };
 
   handleDialogOpen = () => this.setState({ addingDialog: true });
 
-  handleDialogClose() {
+  handleDialogClose = () => {
     this.setState({
       addingDialog: false,
       dialogError: false,
       editingDialog: false,
-      newWordBankName: ""
+      currentWordBank: {
+        name: ""
+      }
     });
-  }
+  };
 
-  onSwipeOpen(rowID) {
-    this.setState({ rowID });
-  }
-  onSwipeClose(rowID) {
-    if (rowID === this.state.rowID) this.setState({ rowID: null });
-  }
+  handleDialogTextChange = newValue => {
+    const { currentWordBank } = this.state;
+    this.setState({ currentWordBank: { ...currentWordBank, ...newValue } });
+  };
+
+  onSwipeOpen = (sectionId, rowId) => this.setState({ rowId });
+
+  onSwipeClose = (sectionId, rowId) => {
+    if (rowId === this.state.rowId) this.setState({ rowId: null });
+  };
 
   render() {
     const { navigate } = this.props.navigation;
@@ -106,7 +116,8 @@ class WordBanks extends Component {
         <Dialog.Container visible={this.state.addingDialog}>
           <Dialog.Input
             label="Word Bank Name"
-            onChangeText={newWordBankName => this.setState({ newWordBankName })}
+            value={this.state.currentWordBank.name}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Add" onPress={this.handleWordBankAdd} />
@@ -114,7 +125,8 @@ class WordBanks extends Component {
         <Dialog.Container visible={this.state.editingDialog}>
           <Dialog.Input
             label="Word Bank Name"
-            onChangeText={newWordBankName => this.setState({ newWordBankName })}
+            value={this.state.currentWordBank.name}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Change" onPress={this.handleWordBankEdit} />
@@ -134,11 +146,11 @@ class WordBanks extends Component {
                     onPress: () => this.handleWordBankRemove(wordBank)
                   }
                 ]}
-                key={i}
-                onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
-                close={this.state.rowID !== i}
+                onOpen={this.onSwipeOpen}
+                close={this.state.rowId !== i}
                 autoClose={true}
-                onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
+                onClose={this.onSwipeClose}
+                key={i}
                 rowID={i}
               >
                 <View>

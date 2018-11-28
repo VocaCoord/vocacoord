@@ -14,13 +14,10 @@ class ClassroomScreen extends Component {
     this.state = {
       addingDialog: false,
       currentClass: {},
+      dialogError: false,
       editingDialog: false,
       rowId: null
     };
-    this.handleClassroomAdd = this.handleClassroomAdd.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
-    this.handleClassroomStartEdit = this.handleClassroomStartEdit.bind(this);
-    this.handleClassroomEdit = this.handleClassroomEdit.bind(this);
   }
 
   componentWillMount() {
@@ -53,12 +50,17 @@ class ClassroomScreen extends Component {
   handleDialogClose = () =>
     this.setState({
       addingDialog: false,
-      newClassName: "",
+      dialogError: false,
       editingDialog: false,
-      rowId: null
+      currentClass: {
+        name: ""
+      }
     });
 
-  handleClassroomAdd() {
+  handleClassroomAdd = () => {
+    if (this.state.currentClass.name === "")
+      return this.setState({ dialogError: true });
+
     this.setState({ addingDialog: false });
     fetch(api + "create", {
       method: "GET",
@@ -68,36 +70,39 @@ class ClassroomScreen extends Component {
     })
       .then(res => res.json())
       .then(json => {
-        const code = json.classID,
-          name = this.state.newClassName;
-        this.props.dispatch(addClass(code, name));
+        const classCode = json.classID;
+        const { name } = this.state.currentClass;
+        this.props.dispatch(addClass(classCode, name));
         this.handleDialogClose();
       });
-  }
+  };
 
-  handleClassroomStartEdit(currentClass) {
-    this.setState({ editingDialog: true, currentClass });
-  }
+  handleClassroomStartEdit = currentClass => {
+    this.setState({ editingDialog: true, currentClass: { ...currentClass } });
+  };
 
-  handleClassroomEdit() {
-    const id = this.state.currentClass.id,
-      name = this.state.newClassName;
+  handleClassroomEdit = () => {
+    const { id, name } = this.state.currentClass;
+
     this.props.dispatch(editClass(id, name));
-
     this.handleDialogClose();
-  }
+  };
 
-  handleClassroomRemove(classroom) {
-    this.props.dispatch(removeClass(classroom.id));
-  }
+  handleClassroomRemove = classroom => {
+    const { id } = classroom;
+    this.props.dispatch(removeClass(id));
+  };
 
-  onSwipeOpen(rowId) {
-    this.setState({ rowId });
-  }
+  handleDialogTextChange = newValue => {
+    const { currentClass } = this.state;
+    this.setState({ currentClass: { ...currentClass, ...newValue } });
+  };
 
-  onSwipeClose(rowId) {
+  onSwipeOpen = (sectionId, rowId) => this.setState({ rowId });
+
+  onSwipeClose = (sectionId, rowId) => {
     if (rowId === this.state.rowId) this.setState({ rowId: null });
-  }
+  };
 
   render() {
     const { navigate } = this.props.navigation;
@@ -109,7 +114,8 @@ class ClassroomScreen extends Component {
         <Dialog.Container visible={this.state.addingDialog}>
           <Dialog.Input
             label="Classroom Name"
-            onChangeText={newClassName => this.setState({ newClassName })}
+            value={this.state.currentClass.name}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Add" onPress={this.handleClassroomAdd} />
@@ -117,7 +123,8 @@ class ClassroomScreen extends Component {
         <Dialog.Container visible={this.state.editingDialog}>
           <Dialog.Input
             label="Classroom Name"
-            onChangeText={newClassName => this.setState({ newClassName })}
+            value={this.state.currentClass.name}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Change" onPress={this.handleClassroomEdit} />
@@ -137,11 +144,11 @@ class ClassroomScreen extends Component {
                     onPress: () => this.handleClassroomRemove(classroom)
                   }
                 ]}
-                key={i}
-                onOpen={(sectionId, rowId) => this.onSwipeOpen(rowId)}
+                onOpen={this.onSwipeOpen}
                 close={this.state.rowId !== i}
                 autoClose={true}
-                onClose={(sectionId, rowId) => this.onSwipeClose(rowId)}
+                onClose={this.onSwipeClose}
+                key={i}
                 rowID={i}
               >
                 <View>
