@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import Swipeout from "react-native-swipeout";
 import { View, Text, StyleSheet, AppState, ScrollView } from "react-native";
 import { ListItem, Icon, Avatar } from "react-native-elements";
+import { Snackbar } from "react-native-paper";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 import { addWord, editWord, removeWord } from "./actions/index.js";
 import ClusterWS from "clusterws-client-js";
 import Voice from "react-native-voice";
 import ImagePicker from "react-native-image-picker";
-import SnackBar from "react-native-snackbar-component";
+import * as Animatable from "react-native-animatable";
 
 let isMounted = false;
 class Words extends Component {
@@ -27,13 +28,17 @@ class Words extends Component {
         definition: "",
         image: ""
       },
+      dialogError: false,
       editingDialog: false,
       lastSpeech: "",
+      isConnectingSnack: false,
+      isConnecting: false,
       socketDisconnected: false,
-      socketShutDown: false
+      socketDisconnectedSnack: false,
+      socketShutDown: false,
+      socketShutDownSnack: false,
+      rowId: null
     };
-    this.isMounted = false;
-    this.handleWordBankStartEdit = this.handleWordStartEdit.bind(this);
     Voice.onSpeechStart = this.onSpeechStartHandler.bind(this);
     Voice.onSpeechEnd = this.onSpeechEndHandler.bind(this);
     Voice.onSpeechResults = this.onSpeechResultsHandler.bind(this);
@@ -64,15 +69,15 @@ class Words extends Component {
     if (this.state.currentWord.name === "")
       return this.setState({ dialogError: true });
 
-    const { wordBankId } = this.state;
+    const { wordBankId, currentWord } = this.state;
 
-    this.props.dispatch(addWord(wordBankId, this.state.currentWord));
+    this.props.dispatch(addWord(wordBankId, currentWord));
     this.handleDialogClose();
   };
 
-  handleWordStartEdit(currentWord) {
+  handleWordStartEdit = currentWord => {
     this.setState({ editingDialog: true, currentWord: { ...currentWord } });
-  }
+  };
 
   handleWordEdit = () => {
     if (this.state.currentWord.name === "")
@@ -83,16 +88,17 @@ class Words extends Component {
     this.handleDialogClose();
   };
 
-  handleWordRemove(word) {
+  handleWordRemove = word => {
     const { wordBankId, id } = word;
     this.props.dispatch(removeWord(wordBankId, id));
-  }
+  };
 
   handleDialogOpen = () => this.setState({ addingDialog: true });
 
   handleDialogClose = () => {
     this.setState({
       addingDialog: false,
+      dialogError: false,
       editingDialog: false,
       currentWord: {
         name: "",
@@ -100,6 +106,11 @@ class Words extends Component {
         image: ""
       }
     });
+  };
+
+  handleDialogTextChange = newValue => {
+    const { currentWord } = this.state;
+    this.setState({ currentWord: { ...currentWord, ...newValue } });
   };
 
   handleSelectImage = () =>
@@ -119,12 +130,11 @@ class Words extends Component {
       }
     );
 
-  onSwipeOpen(rowID) {
-    this.setState({ rowID });
-  }
-  onSwipeClose(rowID) {
-    if (rowID === this.state.rowID) this.setState({ rowID: null });
-  }
+  onSwipeOpen = (sectionId, rowId) => this.setState({ rowId });
+
+  onSwipeClose = (sectionId, rowId) => {
+    if (rowId === this.state.rowId) this.setState({ rowId: null });
+  };
 
   handleAppStateChange = nextAppState => {
     if (
@@ -146,25 +156,40 @@ class Words extends Component {
     });
     this.socket.on("connect", () => {
       console.log("connected to socket");
-      this.setState({ socketDisconnected: false, socketShutDown: false });
+      setTimeout(
+        () =>
+          this.setState({
+            socketDisconnected: false,
+            socketDisconnectedSnack: false,
+            socketShutDown: false,
+            socketShutDownSnack: false,
+            isConnecting: false,
+            isConnectingSnack: false
+          }),
+        2000
+      );
       this.channel = this.socket.subscribe(classCode);
-      AppState.addEventListener("change", this.handleAppStateChange);
+      //AppState.addEventListener("change", this.handleAppStateChange);
 
       this.socket.on("error", err => {
         console.log("socket error", err);
-        if (this.isMounted) this.setState({ socketShutDown: true });
-        this.channel.unsubscribe();
+        if (isMounted)
+          this.setState({ socketShutDown: true, socketShutDownSnack: true });
+        if (this.channel && this.channel.unsubscribe)
+          this.channel.unsubscribe();
       });
       this.socket.on("disconnect", (code, reason) => {
         console.log("closing socket", isMounted);
-        if (isMounted) this.setState({ socketDisconnected: true });
-        this.channel.unsubscribe();
+        if (isMounted)
+          this.setState({ socketDisconnected: true, socketDisconnected: true });
+        if (this.channel && this.channel.unsubscribe)
+          this.channel.unsubscribe();
       });
     });
   };
 
   closeSocket = () => {
-    AppState.removeEventListener("change", this.handleAppStateChange);
+    //AppState.removeEventListener("change", this.handleAppStateChange);
     if (this.socket && this.socket.disconnect) this.socket.disconnect();
     this.socket = null;
   };
@@ -173,6 +198,7 @@ class Words extends Component {
     this.props.navigation.setParams({
       handleDialogOpen: this.handleDialogOpen
     });
+    this.setState({ isConnectingSnack: true, isConnecting: true });
     isMounted = true;
     this.openSocket();
   }
@@ -199,7 +225,7 @@ class Words extends Component {
     this.sendToStudent(e.value[0]);
   }
 
-  sendToStudent(nextSpeech) {
+  sendToStudent = nextSpeech => {
     const lastWords = this.state.lastSpeech.toLowerCase().split(" ");
     const nextWords = nextSpeech.toLowerCase().split(" ");
 
@@ -216,33 +242,30 @@ class Words extends Component {
     });
 
     this.setState({ lastSpeech: nextSpeech });
-  }
+  };
 
   render() {
     const { wordbanks, words } = this.props;
     const wordbank = this.props.navigation.getParam("wordBankId");
     const wordIds = wordbanks[wordbank] ? wordbanks[wordbank].words : [];
     const wordList = wordIds.map(word => words[word]);
+
+    const { socketDisconnected, socketShutDown, isConnecting } = this.state;
+
     return (
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <Dialog.Container visible={this.state.addingDialog}>
           <Dialog.Input
             label="Word Name"
             value={this.state.currentWord.name}
-            onChangeText={name => {
-              const { currentWord } = this.state;
-              currentWord.name = name;
-              this.setState({ currentWord });
-            }}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Input
             label="Word Definition"
             value={this.state.currentWord.definition}
-            onChangeText={definition => {
-              const { currentWord } = this.state;
-              currentWord.definition = definition;
-              this.setState({ currentWord });
-            }}
+            onChangeText={definition =>
+              this.handleDialogTextChange({ definition })
+            }
           />
           <Dialog.Button label="Add Photo" onPress={this.handleSelectImage} />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
@@ -252,20 +275,14 @@ class Words extends Component {
           <Dialog.Input
             label="Word Name"
             value={this.state.currentWord.name}
-            onChangeText={name => {
-              const { currentWord } = this.state;
-              currentWord.name = name;
-              this.setState({ currentWord });
-            }}
+            onChangeText={name => this.handleDialogTextChange({ name })}
           />
           <Dialog.Input
             label="Word Definition"
             value={this.state.currentWord.definition}
-            onChangeText={definition => {
-              const { currentWord } = this.state;
-              currentWord.definition = definition;
-              this.setState({ currentWord });
-            }}
+            onChangeText={definition =>
+              this.handleDialogTextChange({ definition })
+            }
           />
           <Dialog.Button label="Edit Photo" onPress={this.handleSelectImage} />
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
@@ -286,10 +303,10 @@ class Words extends Component {
                     onPress: () => this.handleWordRemove(word)
                   }
                 ]}
-                onOpen={(sectionID, rowID) => this.onSwipeOpen(rowID)}
-                close={this.state.rowID !== i}
+                onOpen={this.onSwipeOpen}
+                close={this.state.rowId !== i}
                 autoClose={true}
-                onClose={(sectionID, rowID) => this.onSwipeClose(rowID)}
+                onClose={this.onSwipeClose}
                 key={i}
                 rowID={i}
               >
@@ -321,8 +338,8 @@ class Words extends Component {
             </Text>
           </View>
         )}
-        <View style={styles.micButton}>
-          {!this.state.socketDisconnected && !this.state.socketShutDown && (
+        {!socketDisconnected && !socketShutDown && !isConnecting && (
+          <View style={styles.micButton}>
             <Icon
               name="mic"
               onPress={() => Voice.start("en-US")}
@@ -330,8 +347,10 @@ class Words extends Component {
               reverse
               size={50}
             />
-          )}
-          {this.state.socketDisconnected && (
+          </View>
+        )}
+        {socketDisconnected && (
+          <View style={styles.micButton}>
             <Icon
               name="autorenew"
               onPress={() => this.openSocket()}
@@ -339,8 +358,10 @@ class Words extends Component {
               reverse
               size={50}
             />
-          )}
-          {this.state.socketShutDown && (
+          </View>
+        )}
+        {socketShutDown && (
+          <View style={styles.micButton}>
             <Icon
               name="cloud-off"
               onPress={() => this.openSocket()}
@@ -348,16 +369,38 @@ class Words extends Component {
               reverse
               size={50}
             />
-          )}
-        </View>
-        <SnackBar
-          visible={this.state.socketDisconnected}
-          textMessage="You disconnected. Hit the button to reconnect."
-        />
-        <SnackBar
-          visible={this.state.socketShutDown}
-          textMessage="Something went wrong. Hit the button to reconnect."
-        />
+          </View>
+        )}
+        {isConnecting && (
+          <Animatable.View
+            style={styles.micButton}
+            animation="rotate"
+            easing="linear"
+            iterationCount="infinite"
+            duration={7000}
+            useNativeDriver
+          >
+            <Icon name="autorenew" raised reverse size={50} />
+          </Animatable.View>
+        )}
+        <Snackbar
+          visible={this.state.socketDisconnectedSnack}
+          onDismiss={() => this.setState({ socketDisconnectedSnack: false })}
+        >
+          You disconnected. Hit the button to try to reconnect.
+        </Snackbar>
+        <Snackbar
+          visible={this.state.socketShutDownSnack}
+          onDismiss={() => this.setState({ socketShutDownSnack: false })}
+        >
+          Something went wrong. Hit the button to try to reconnect.
+        </Snackbar>
+        <Snackbar
+          visible={this.state.isConnectingSnack}
+          onDismiss={() => this.setState({ isConnectingSnack: false })}
+        >
+          Hold on while we connect you to the server.
+        </Snackbar>
       </View>
     );
   }
@@ -377,7 +420,8 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
     alignSelf: "flex-end",
     bottom: 0,
-    position: "absolute"
+    position: "absolute",
+    zIndex: 2
   }
 });
 

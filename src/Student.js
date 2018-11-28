@@ -5,7 +5,7 @@ import { Divider } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
 
 let api = "https://temp-vocacoord.herokuapp.com/api/";
-
+let wentBack = false;
 export class StudentScreen extends Component {
   constructor(props) {
     super(props);
@@ -27,16 +27,16 @@ export class StudentScreen extends Component {
       url: "wss://temp-vocacoord.herokuapp.com/"
     });
     this.socket.on("connect", () => {
+      console.log("connected to socket");
       this.channel = this.socket.subscribe(classCode.toUpperCase());
       const { navigate } = this.props.navigation;
-      setTimeout(
-        () =>
-          navigate("ClassScreen", {
-            channel: this.channel,
-            callback: this.isConnected.bind(this)
-          }),
-        3000
-      );
+      setTimeout(() => {
+        if (wentBack) return;
+        navigate("ClassScreen", {
+          channel: this.channel,
+          callback: this.isConnected
+        });
+      }, 3000);
     });
     this.socket.on("error", err => {
       console.error("error: ", err);
@@ -47,17 +47,22 @@ export class StudentScreen extends Component {
     });
   }
 
-  isConnected() {
+  isConnected = () => {
     this.setState({ isConnecting: false });
+  };
+
+  componentDidMount() {
+    wentBack = false;
   }
 
   componentWillUnmount() {
-    if (this.socket) this.socket.disconnect();
+    wentBack = true;
+    if (this.socket && this.socket.disconnect) this.socket.disconnect();
   }
 
   validateClassCode() {
-    let { classCode } = this.state,
-      classCodeError = false;
+    const { classCode } = this.state;
+    let classCodeError = false;
     if (!classCode || classCode.length !== 4) classCodeError = true;
     this.setState({ classCodeError });
     return !classCodeError;
