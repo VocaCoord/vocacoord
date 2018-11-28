@@ -288,9 +288,9 @@ class Words extends Component {
           <Dialog.Button label="Cancel" onPress={this.handleDialogClose} />
           <Dialog.Button label="Change" onPress={this.handleWordEdit} />
         </Dialog.Container>
-        <ScrollView>
-          {wordList.length > 0 &&
-            wordList.map((word, i) => (
+        {wordList.length > 0 && (
+          <ScrollView>
+            {wordList.map((word, i) => (
               <Swipeout
                 right={[
                   {
@@ -329,7 +329,8 @@ class Words extends Component {
                 </View>
               </Swipeout>
             ))}
-        </ScrollView>
+          </ScrollView>
+        )}
         {wordList.length === 0 && (
           <View style={styles.container}>
             <Text>
