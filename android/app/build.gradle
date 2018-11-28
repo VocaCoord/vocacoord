@@ -108,6 +108,16 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            if (project.hasProperty('VOCACOORD_RELEASE_STORE_FILE')) {
+                storeFile file(VOCACOORD_RELEASE_STORE_FILE)
+                storePassword VOCACOORD_RELEASE_STORE_PASSWORD
+                keyAlias VOCACOORD_RELEASE_KEY_ALIAS
+                keyPassword VOCACOORD_RELEASE_KEY_PASSWORD
+            }
+        }
+    }
     splits {
         abi {
             reset()
@@ -120,6 +130,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -143,6 +154,8 @@ dependencies {
     compile "com.facebook.react:react-native:+"  // From node_modules
     compile project(':react-native-vector-icons')
     compile project(':react-native-voice')
+    compile project(':bugsnag-react-native')
+    compile project(':react-native-image-picker')
 }
 
 // Run this once to be able to run the application with BUCK
