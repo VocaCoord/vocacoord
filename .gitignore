@@ -59,6 +59,7 @@ yarn-error.log
 buck-out/
 \.buckd/
 *.keystore
+*.ks
 
 # fastlane
 #
@@ -79,3 +80,4 @@ buck-out/
 
 # Secret Environment Variables
 .env
+*.properties

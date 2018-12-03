@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Swipeout from "react-native-swipeout";
-import { View, Text, StyleSheet, AppState, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { ListItem, Icon, Avatar } from "react-native-elements";
 import { Snackbar } from "react-native-paper";
 import Dialog from "react-native-dialog";
@@ -16,7 +16,6 @@ class Words extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      appState: AppState.currentState,
       className: props.navigation.getParam("className"),
       classCode: props.navigation.getParam("classCode"),
       classId: props.navigation.getParam("classId"),
@@ -39,8 +38,6 @@ class Words extends Component {
       socketShutDownSnack: false,
       rowId: null
     };
-    Voice.onSpeechStart = this.onSpeechStartHandler.bind(this);
-    Voice.onSpeechEnd = this.onSpeechEndHandler.bind(this);
     Voice.onSpeechResults = this.onSpeechResultsHandler.bind(this);
     Voice.onSpeechPartialResults = this.onSpeechPartialResultsHandler.bind(
       this
@@ -136,60 +133,44 @@ class Words extends Component {
     if (rowId === this.state.rowId) this.setState({ rowId: null });
   };
 
-  handleAppStateChange = nextAppState => {
-    if (
-      this.state.appState === "active" &&
-      nextAppState.match(/inactive|background/)
-    ) {
-      isMounted = true;
-      this.closeSocket();
-    }
-
-    this.setState({ appState: nextAppState });
-  };
-
   openSocket = () => {
     const { classCode } = this.state;
-    if (this.socket && this.socket.disconnect) this.socket.disconnect();
+    this.setState({
+      socketDisconnected: false,
+      socketDisconnectedSnack: false,
+      socketShutDown: false,
+      socketShutDownSnack: false,
+      isConnecting: true,
+      isConnectingSnack: true
+    });
     this.socket = new ClusterWS({
       url: "wss://temp-vocacoord.herokuapp.com/"
     });
     this.socket.on("connect", () => {
-      console.log("connected to socket");
       setTimeout(
         () =>
           this.setState({
-            socketDisconnected: false,
-            socketDisconnectedSnack: false,
-            socketShutDown: false,
-            socketShutDownSnack: false,
             isConnecting: false,
             isConnectingSnack: false
           }),
         2000
       );
       this.channel = this.socket.subscribe(classCode);
-      //AppState.addEventListener("change", this.handleAppStateChange);
-
-      this.socket.on("error", err => {
-        console.log("socket error", err);
-        if (isMounted)
-          this.setState({ socketShutDown: true, socketShutDownSnack: true });
-        if (this.channel && this.channel.unsubscribe)
-          this.channel.unsubscribe();
-      });
-      this.socket.on("disconnect", (code, reason) => {
-        console.log("closing socket", isMounted);
-        if (isMounted)
-          this.setState({ socketDisconnected: true, socketDisconnected: true });
-        if (this.channel && this.channel.unsubscribe)
-          this.channel.unsubscribe();
-      });
+    });
+    this.socket.on("error", err => {
+      if (isMounted)
+        this.setState({ socketShutDown: true, socketShutDownSnack: true });
+    });
+    this.socket.on("disconnect", (code, reason) => {
+      if (isMounted)
+        this.setState({
+          socketDisconnected: true,
+          socketDisconnectedSnack: true
+        });
     });
   };
 
   closeSocket = () => {
-    //AppState.removeEventListener("change", this.handleAppStateChange);
     if (this.socket && this.socket.disconnect) this.socket.disconnect();
     this.socket = null;
   };
@@ -208,16 +189,7 @@ class Words extends Component {
     this.closeSocket();
   }
 
-  onSpeechStartHandler(e) {
-    console.log("starting voice activity:", e);
-  }
-
-  onSpeechEndHandler(e) {
-    console.log("ending voice activity:", e);
-  }
-
   onSpeechResultsHandler(e) {
-    console.log("final voice results:", e);
     this.sendToStudent(e.value[0]);
   }
 
