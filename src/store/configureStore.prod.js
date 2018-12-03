@@ -1,20 +1,20 @@
 import { createStore } from "redux";
-import { loadState, saveState } from "./localStorage";
-import throttle from "lodash/throttle";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import rootReducer from "../reducers";
 
+const persistConfig = {
+  key: "com.vocacoord:state",
+  storage
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 const configureStore = () => {
-  const preloadedState = loadState();
+  const store = createStore(persistedReducer);
+  const persistor = persistStore(store);
 
-  const store = createStore(rootReducer, preloadedState);
-
-  store.subscribe(
-    throttle(() => {
-      saveState(store.getState());
-    }, 1000)
-  );
-
-  return store;
+  return { store, persistor };
 };
 
 export default configureStore;
