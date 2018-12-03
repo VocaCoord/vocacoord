@@ -127,23 +127,14 @@ function userDataReducer(state = initialState, action) {
 
     case LOGIN_FAILURE:
     case LOGIN_SUCCESS: {
-      const {
-        authenticated,
-        firstName,
-        lastName,
-        email,
-        data
-      } = action.payload;
-      let newUser = {
+      const { authenticated, firstName, lastName, email } = action.payload;
+      const newUser = {
         authenticated,
         firstName,
         lastName,
         email
       };
-      let newState = dotProp.set(state, `user`, newUser);
-      newState = dotProp.set(newState, `classrooms`, data.classrooms);
-      newState = dotProp.set(newState, `wordbanks`, data.wordbanks);
-      return dotProp.set(newState, `words`, data.words);
+      return dotProp.set(state, `user`, newUser);
     }
 
     case "LOGOUT": {
