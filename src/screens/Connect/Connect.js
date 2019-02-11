@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { Button, TextInput, HelperText } from "react-native-paper";
 import { Divider } from "react-native-elements";
 import ClusterWS from "clusterws-client-js";
 
-let api = "https://temp-vocacoord.herokuapp.com/api/";
 let wentBack = false;
-export class StudentScreen extends Component {
+export default class ConnectScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,10 +15,29 @@ export class StudentScreen extends Component {
     };
   }
 
+  componentDidMount() {
+    wentBack = false;
+  }
+
+  componentWillUnmount() {
+    wentBack = true;
+    if (this.socket && this.socket.disconnect) this.socket.disconnect();
+  }
+
+  isConnected = () => {
+    this.setState({ isConnecting: false });
+  };
+
+  handleClassCodeChange = classCode =>
+    this.setState({ classCode }, () => {
+      const { classCodeError } = this.state;
+      if (classCodeError) this.validateClassCode();
+    });
+
   connectToClass() {
     if (!this.validateClassCode()) return;
 
-    let { classCode } = this.state;
+    const { classCode } = this.state;
 
     this.setState({ isConnecting: true, classCodeError: false });
 
@@ -27,9 +45,10 @@ export class StudentScreen extends Component {
       url: "wss://temp-vocacoord.herokuapp.com/"
     });
     this.socket.on("connect", () => {
-      console.log("connected to socket");
       this.channel = this.socket.subscribe(classCode.toUpperCase());
-      const { navigate } = this.props.navigation;
+      const {
+        navigation: { navigate }
+      } = this.props;
       setTimeout(() => {
         if (wentBack) return;
         navigate("ClassScreen", {
@@ -41,23 +60,7 @@ export class StudentScreen extends Component {
     this.socket.on("error", err => {
       console.error("error: ", err);
     });
-    this.socket.on("disconnect", (code, reason) => {
-      console.log(`disconnected with code ${code} and reason ${reason}`);
-      this.channel.unsubscribe();
-    });
-  }
-
-  isConnected = () => {
-    this.setState({ isConnecting: false });
-  };
-
-  componentDidMount() {
-    wentBack = false;
-  }
-
-  componentWillUnmount() {
-    wentBack = true;
-    if (this.socket && this.socket.disconnect) this.socket.disconnect();
+    this.socket.on("disconnect", () => this.channel.unsubscribe());
   }
 
   validateClassCode() {
@@ -69,9 +72,11 @@ export class StudentScreen extends Component {
   }
 
   render() {
+    const { styles } = this.props;
+    const { isConnecting, classCode, classCodeError } = this.state;
     return (
       <View style={styles.container}>
-        {this.state.isConnecting ? (
+        {isConnecting ? (
           <View>
             <Text>Hold on while we try to connect you to the classroom...</Text>
             <ActivityIndicator size="large" color="#ffa500" />
@@ -83,15 +88,11 @@ export class StudentScreen extends Component {
               style={styles.textbox}
               label="Class Code"
               mode="outlined"
-              value={this.state.classCode}
-              onChangeText={classCode => {
-                this.setState({ classCode }, () => {
-                  if (this.state.classCodeError) this.validateClassCode();
-                });
-              }}
-              error={this.state.classCodeError}
+              value={classCode}
+              onChangeText={this.handleClassCodeChange}
+              error={classCodeError}
             />
-            <HelperText type="error" visible={this.state.classCodeError}>
+            <HelperText type="error" visible={classCodeError}>
               Classroom codes must be exactly 4 characters long.
             </HelperText>
             <Divider style={styles.divider} />
@@ -109,29 +110,3 @@ export class StudentScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  button: {
-    minWidth: "60%",
-    maxWidth: "60%"
-  },
-  textbox: {
-    minWidth: "60%",
-    maxWidth: "60%"
-  },
-  divider: {
-    height: "10%",
-    backgroundColor: "#fff"
-  },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "black"
-  }
-});

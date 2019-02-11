@@ -1,14 +1,13 @@
 import React, { Component } from "react";
-import { View, StyleSheet, ScrollView, PixelRatio } from "react-native";
+import { View, ScrollView, PixelRatio, Image } from "react-native";
 import { ListItem, Text, Avatar } from "react-native-elements";
-import { Image } from "react-native";
 
 /* Class screen for showing the word bank and words that popped up */
-export class ClassScreen extends Component {
+export default class ClassScreen extends Component {
   constructor(props) {
     super(props);
     const { navigation } = props;
-    channel = navigation.getParam("channel");
+    const channel = navigation.getParam("channel");
     this.state = {
       words: [],
       currentWord: {},
@@ -18,8 +17,13 @@ export class ClassScreen extends Component {
 
     channel.watch(wordSaid => {
       const { name } = wordSaid;
+      /* eslint-disable */
       let words = [...this.state.words];
-      let word = words.find(w => w.name === name) || { ...wordSaid, count: 0 };
+      /* eslint-enable */
+      const word = words.find(w => w.name === name) || {
+        ...wordSaid,
+        count: 0
+      };
       word.count += 1;
       words = words.filter(w => w.name !== name);
       words.unshift(word);
@@ -28,19 +32,19 @@ export class ClassScreen extends Component {
   }
 
   componentWillMount() {
-    this.props.navigation.addListener("didFocus", () =>
-      this.props.navigation.getParam("callback")()
-    );
+    const { navigation } = this.props;
+    navigation.addListener("didFocus", () => navigation.getParam("callback")());
   }
 
   componentWillUnmount() {
-    this.props.navigation.getParam("channel").unsubscribe();
+    const { navigation } = this.props;
+    navigation.getParam("channel").unsubscribe();
   }
 
   selectWord(word) {
     if (!word.image || word.image === "")
       return this.setState({ currentWord: word });
-    let ratio = PixelRatio.get();
+    const ratio = PixelRatio.get();
     Image.getSize(word.image, (width, height) => {
       this.setState({
         currentWord: word,
@@ -52,7 +56,7 @@ export class ClassScreen extends Component {
 
   render() {
     const { words } = this.state || [];
-    const { currentWord } = this.state;
+    const { currentWord, imgWidth, imgHeight } = this.state;
     return (
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <View
@@ -67,8 +71,8 @@ export class ClassScreen extends Component {
             style={{
               maxWidth: "90%",
               maxHeight: "90%",
-              width: this.state.imgWidth,
-              height: this.state.imgHeight
+              width: imgWidth,
+              height: imgHeight
             }}
             source={{
               uri: currentWord.image !== "" ? currentWord.image : null
@@ -97,62 +101,34 @@ export class ClassScreen extends Component {
         <View style={{ flex: 0.4 }}>
           <ScrollView>
             {words.length > 0 &&
-              words.map((word, i) => {
-                return (
-                  <View key={i}>
-                    <ListItem
-                      title={word.name}
-                      subtitle={word.definition}
-                      style={{ backgroundColor: "#fff" }}
-                      avatar={
-                        word.image !== "" && (
-                          <Avatar medium source={{ uri: word.image }} />
-                        )
-                      }
-                      titleStyle={{
-                        color: currentWord.name === word.name ? "red" : "black",
-                        fontSize: 32
-                      }}
-                      rightTitle={`Times said: ${word.count}`}
-                      rightTitleStyle={{
-                        color: "black",
-                        fontSize: 24
-                      }}
-                      hideChevron={true}
-                      onPress={() => this.selectWord(word)}
-                    />
-                  </View>
-                );
-              })}
+              words.map(word => (
+                <View key={word}>
+                  <ListItem
+                    title={word.name}
+                    subtitle={word.definition}
+                    style={{ backgroundColor: "#fff" }}
+                    avatar={
+                      word.image !== "" && (
+                        <Avatar medium source={{ uri: word.image }} />
+                      )
+                    }
+                    titleStyle={{
+                      color: currentWord.name === word.name ? "red" : "black",
+                      fontSize: 32
+                    }}
+                    rightTitle={`Times said: ${word.count}`}
+                    rightTitleStyle={{
+                      color: "black",
+                      fontSize: 24
+                    }}
+                    hideChevron
+                    onPress={() => this.selectWord(word)}
+                  />
+                </View>
+              ))}
           </ScrollView>
         </View>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  button: {
-    minWidth: "60%",
-    maxWidth: "60%"
-  },
-  textbox: {
-    minWidth: "60%",
-    maxWidth: "60%"
-  },
-  divider: {
-    height: "10%",
-    backgroundColor: "#fff"
-  },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "black"
-  }
-});

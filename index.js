@@ -1,7 +1,7 @@
 import { AppRegistry, YellowBox } from "react-native";
-import Root from "./src/components/Root";
+import AppNavigator from "./src/AppNavigator";
 
-AppRegistry.registerComponent("VocaCoord", () => Root);
+AppRegistry.registerComponent("VocaCoord", () => AppNavigator);
 YellowBox.ignoreWarnings([
   "Warning: isMounted(...) is deprecated",
   "Module RCTImageLoader"
