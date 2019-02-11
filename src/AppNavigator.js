@@ -1,14 +1,9 @@
 import { createStackNavigator } from "react-navigation";
-import { HomeScreen } from "./Home.js";
-import LoginScreen from "./Login.js";
-import SignupScreen from "./Signup.js";
-import ClassroomScreen from "./Classrooms.js";
-import { StudentScreen } from "./Student.js";
-import { ClassScreen } from "./Class.js";
-import WordBank from "./Words.js";
-import WordBanks from "./WordBanks.js";
+import HomeScreen from "./screens/Home";
+import ConnectScreen from "./screens/Connect";
+import ClassroomScreen from "./screens/Classroom";
 
-export default (AppNavigator = createStackNavigator(
+export default createStackNavigator(
   {
     HomeScreen: {
       screen: HomeScreen,
@@ -16,15 +11,10 @@ export default (AppNavigator = createStackNavigator(
         header: null
       }
     },
-    LoginScreen,
-    SignupScreen,
-    ClassroomScreen,
-    WordBanks,
-    WordBank,
-    StudentScreen,
-    ClassScreen
+    ConnectScreen,
+    ClassroomScreen
   },
   {
     initialRouteName: "HomeScreen"
   }
-));
+);
