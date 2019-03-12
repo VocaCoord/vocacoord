@@ -98,6 +98,14 @@ export default class ClassScreen extends Component {
             </Text>
           </Text>
         </View>
+
+
+
+
+        
+
+
+
         <View style={{ flex: 0.4 }}>
           <ScrollView>
             {words.length > 0 &&

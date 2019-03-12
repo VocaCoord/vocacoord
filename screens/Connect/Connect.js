@@ -58,7 +58,7 @@ export default class ConnectScreen extends Component {
       }, 3000);
     });
     /*this.socket.on('error', err => {
-      console.error('error: ', err);
+      console.error('error: ', err); // <--- commented out because it was throwing an error
     }); */
     //this.socket.on('disconnect', () => this.channel.unsubscribe()); <--- commented out because it broke
   }
