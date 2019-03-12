@@ -1,7 +1,7 @@
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 import HomeScreen from '../screens/Home';
 import ConnectScreen from '../screens/Connect';
-import ClassroomScreen from '../screens/Classroom';
+import ClassroomScreen from '../screens/components/newUI';
 
 export default createAppContainer(
   createStackNavigator(
