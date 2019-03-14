@@ -81,11 +81,11 @@ export default class ConnectScreen extends Component {
         words
       });
     });
-    this.socket.on('error', err => {
-      console.error('error: ', err);
-    });
-    this.socket.on('disconnect', () => this.channel.unsubscribe());
-  };
+    /*this.socket.on('error', err => {
+      console.error('error: ', err); // <--- commented out because it was throwing an error
+    }); */
+    //this.socket.on('disconnect', () => this.channel.unsubscribe()); <--- commented out because it broke
+  }
 
   validateCodeLength = () => {
     const { classCode } = this.state;
