@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
-import { ListItem, Avatar } from "react-native-elements";
+import { View, Text, Dimensions, YellowBox } from "react-native";
+import { ListItem, Avatar, Divider } from "react-native-elements";
 import { FlatList } from "react-native-gesture-handler";
 import { styles } from "../../Home/Home.styles";
 import layout from "../../../constants/Layout";
 
+YellowBox.ignoreWarnings(['Setting']); /* Suppress those silly warnings */
 
  
 export default class ClassScreen extends Component {
@@ -29,8 +30,9 @@ export default class ClassScreen extends Component {
         count: 0
       };
       word.count += 1;
+      word.titleStyle.color = 'blue'; /* Just testing things */
       words = words.filter(w => w.name !== name);
-      //words.unshift(word);
+      //words.unshift(word)
       this.setState({ words });
     });
   }
@@ -52,23 +54,34 @@ export default class ClassScreen extends Component {
 
   render() {
     const { words } = this.state;
-    if (!words) console.log("Words undefined");
+    const wHeight = Dimensions.get('window').height;
+    const divHeight = (wHeight / words.length / ( (words.length - 4 <= 0) ? 10 : words.length - 4 ) );
+    const { styles } = this.props;
+    console.log(`Word count: ${words.length}`);
+    console.log(`Window height: ${wHeight}`);
+    console.log(`Divider Height: ${divHeight}`);
     return (
       /* Knocked out the giant black display at the very top */
 
-      /* Create dummy array of words */
-      <View>
+      /* Words are pulled from firebase server. Need to have expandable list items with larger image */
+      <View style={{flexGrow: 1}}>
         {
         words.map( (l, i) => (
-          <ListItem
-            key={i}
-            leftAvatar={{ source: { uri: l.imagePath} } }
-            title={l.name}
-            titleStyle={styles.listItem}
-            subtitle={l.definition}
-            subtitleStyle={styles.subStyle}
-            />
-        ) ) 
+          <View key={i}>
+            <ListItem
+              key={i}
+              leftAvatar={{ source: { uri: (!l.image) ? null : l.image.url} } }
+              title={l.name}
+              titleStyle= {styles.listItem}
+              subtitle={l.definition}
+              subtitleStyle={styles.subStyle}
+              />
+              <Divider style= {{
+                height: divHeight,
+                backgroundColor: 'white'
+              }}/>
+            </View>
+        ) )
         }
       </View>
     );

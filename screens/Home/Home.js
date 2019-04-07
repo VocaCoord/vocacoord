@@ -16,7 +16,7 @@ export default ({ navigation: { navigate }, styles }) => (
       <Button
         color="#ffa500"
         mode="contained"
-        onPress={() => navigate('ConnectScreen')}
+        onPress={() => navigate('ConnectScreen' /*'ClassroomScreen' */)}
       >
         <Text style={styles.buttonText}>Student</Text>
       </Button>
