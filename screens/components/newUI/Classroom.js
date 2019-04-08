@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, Dimensions, YellowBox } from "react-native";
+import { View, Text, Dimensions, YellowBox, Image } from "react-native";
 import { ListItem, Avatar, Divider } from "react-native-elements";
 import { FlatList } from "react-native-gesture-handler";
 import { styles } from "../../Home/Home.styles";
 import layout from "../../../constants/Layout";
+import { Collapse, CollapseHeader, CollapseBody } from "accordion-collapse-react-native";
 
 YellowBox.ignoreWarnings(['Setting']); /* Suppress those silly warnings */
 
@@ -68,14 +69,26 @@ export default class ClassScreen extends Component {
         {
         words.map( (l, i) => (
           <View key={i}>
-            <ListItem
-              key={i}
-              leftAvatar={{ source: { uri: (!l.image) ? null : l.image.url} } }
-              title={l.name}
-              titleStyle= {styles.listItem}
-              subtitle={l.definition}
-              subtitleStyle={styles.subStyle}
+            <Collapse key={i}>
+            <CollapseHeader key={i}>
+              <ListItem
+                key={i}
+                leftAvatar={{ source: { uri: (!l.image) ? null : l.image.url} } }
+                title={l.name}
+                titleStyle= {styles.listItem}/>
+            </CollapseHeader>
+            <CollapseBody key={i}>
+               <Text style={styles.subStyle}>{"\t" + l.definition}</Text>
+               <Text>{(!l.image) ? "No image" : "There's an image!"}</Text>
+              <Image source = {{uri: (!l.image) ? null : l.image.url}} 
+              style= { {
+                width: 100,
+                height: divHeight
+              }
+              }
               />
+            </CollapseBody>
+            </Collapse>
               <Divider style= {{
                 height: divHeight,
                 backgroundColor: 'white'

@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         color: "#000000",
     },
     subStyle: {
-        fontSize: 12,
+        fontSize: 18,
         color: "black"
     },
     container: {
