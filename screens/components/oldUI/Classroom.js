@@ -17,6 +17,7 @@ export default class ClassScreen extends Component {
 
     channel.watch(wordSaid => {
       const { name } = wordSaid;
+      console.log(`Heard ${name}`)
       /* eslint-disable */
       let words = [...this.state.words];
       /* eslint-enable */

@@ -2,12 +2,12 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     listItem: {
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: "bold",
         color: "#000000",
     },
     subStyle: {
-        fontSize: 18,
+        fontSize: 20,
         color: "black"
     },
     container: {
