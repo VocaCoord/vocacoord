@@ -1,7 +1,8 @@
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 import HomeScreen from '../screens/Home';
 import ConnectScreen from '../screens/Connect';
-import ClassroomScreen from '../screens/components/newUI'; /* Change to oldUI to use the old UI */
+import OldClassroomScreen from '../screens/OldUI';
+import NewClassroomScreen from '../screens/NewUI';
 
 export default createAppContainer(
   createStackNavigator(
@@ -13,7 +14,8 @@ export default createAppContainer(
         }
       },
       ConnectScreen,
-      ClassroomScreen
+      OldClassroomScreen,
+      NewClassroomScreen
     },
     {
       initialRouteName: 'HomeScreen'

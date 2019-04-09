@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import { View, ScrollView, PixelRatio, Image } from "react-native";
-import { ListItem, Text, Avatar } from "react-native-elements";
+import React, { Component } from 'react';
+import { View, ScrollView, Image } from 'react-native';
+import { ListItem, Text, Avatar } from 'react-native-elements';
 
 /* Class screen for showing the word bank and words that popped up */
 export default class ClassScreen extends Component {
   constructor(props) {
     super(props);
     const { navigation } = props;
-    const channel = navigation.getParam("channel");
+    const channel = navigation.getParam('channel');
     this.state = {
       words: [],
       currentWord: {},
@@ -33,92 +33,85 @@ export default class ClassScreen extends Component {
 
   componentWillMount() {
     const { navigation } = this.props;
-    navigation.addListener("didFocus", () => navigation.getParam("callback")());
+    navigation.addListener('didFocus', () => navigation.getParam('callback')());
   }
 
   componentWillUnmount() {
     const { navigation } = this.props;
-    navigation.getParam("channel").unsubscribe();
+    navigation.getParam('channel').unsubscribe();
   }
 
-  selectWord(word) {
-    if (!word.image || word.image === "")
-      return this.setState({ currentWord: word });
-    const ratio = PixelRatio.get();
-    Image.getSize(word.image, (width, height) => {
-      this.setState({
-        currentWord: word,
-        imgWidth: width * ratio,
-        imgHeight: height * ratio
-      });
-    });
-  }
+  selectWord = word => this.setState({ currentWord: word });
 
   render() {
     const { words } = this.state || [];
-    const { currentWord, imgWidth, imgHeight } = this.state;
+    const { currentWord } = this.state;
     return (
-      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <View
           style={{
             flex: 0.46,
-            backgroundColor: "black",
-            justifyContent: "center",
-            alignItems: "center"
+            backgroundColor: 'black',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
           <Image
             style={{
-              maxWidth: "90%",
-              maxHeight: "90%",
-              width: imgWidth,
-              height: imgHeight
+              maxWidth: '90%',
+              maxHeight: '90%',
+              width: '90%',
+              height: '90%'
             }}
             source={{
-              uri: currentWord.image !== "" ? currentWord.image : null
+              uri:
+                currentWord.image && currentWord.image.url
+                  ? currentWord.image.url
+                  : null
             }}
           />
         </View>
         <View
           style={{
             flex: 0.14,
-            borderColor: "gray",
+            borderColor: 'gray',
             borderBottomWidth: 1
           }}
         >
           <Text>
             <Text
               h3
-              style={{ color: "black", textDecorationLine: "underline" }}
+              style={{ color: 'black', textDecorationLine: 'underline' }}
             >
-              {"Definition:"}
+              {'Definition:'}
             </Text>
-            <Text h4 style={{ color: "black" }}>
+            <Text h4 style={{ color: 'black' }}>
               {currentWord.definition ? ` ${currentWord.definition}` : null}
             </Text>
           </Text>
         </View>
+
         <View style={{ flex: 0.4 }}>
           <ScrollView>
             {words.length > 0 &&
               words.map(word => (
-                <View key={word}>
+                <View key={word.name}>
                   <ListItem
                     title={word.name}
                     subtitle={word.definition}
-                    style={{ backgroundColor: "#fff" }}
+                    style={{ backgroundColor: '#fff' }}
                     avatar={
-                      word.image !== "" && (
-                        <Avatar medium source={{ uri: word.image }} />
+                      word.image &&
+                      word.image.url && (
+                        <Avatar medium source={{ uri: word.image.url }} />
                       )
                     }
                     titleStyle={{
-                      color: currentWord.name === word.name ? "red" : "black",
+                      color: currentWord.name === word.name ? 'red' : 'black',
                       fontSize: 32
                     }}
-                    rightTitle={`Times said: ${word.count}`}
                     rightTitleStyle={{
-                      color: "black",
+                      color: 'black',
                       fontSize: 24
                     }}
                     hideChevron

@@ -4,12 +4,7 @@ import { Button, TextInput, HelperText } from 'react-native-paper';
 import { Divider } from 'react-native-elements';
 import ClusterWS from 'clusterws-client-js';
 import { classExists, getWords } from '../../firebase';
-import {
-  errors,
-  CODE_LENGTH,
-  NO_CLASS,
-  NO_WORDS
-} from '../../constants/Errors';
+import { CODE_LENGTH, NO_CLASS, NO_WORDS } from '../../constants/Errors';
 
 let wentBack = false;
 export default class ConnectScreen extends Component {
@@ -19,7 +14,8 @@ export default class ConnectScreen extends Component {
       classCode: '',
       isConnecting: false,
       classCodeError: false,
-      errorCode: ''
+      error: '',
+      ui: props.navigation.getParam('ui')
     };
   }
 
@@ -44,20 +40,20 @@ export default class ConnectScreen extends Component {
     const { classCode } = this.state;
 
     if (!this.validateCodeLength()) return;
-    this.setState({ isConnecting: true, classCodeError: false, errorCode: '' });
-    classExists(classCode).then(classroom => {
+    this.setState({ isConnecting: true, classCodeError: false, error: '' });
+    classExists(classCode.toUpperCase()).then(classroom => {
       if (!classroom)
         return this.setState({
           isConnecting: false,
           classCodeError: true,
-          errorCode: NO_CLASS
+          error: NO_CLASS
         });
       return getWords(classroom).then(words => {
         if (words.length === 0)
           return this.setState({
             isConnecting: false,
             classCodeError: true,
-            errorCode: NO_WORDS
+            error: NO_WORDS
           });
         return this.connectToClass(words);
       });
@@ -65,43 +61,39 @@ export default class ConnectScreen extends Component {
   };
 
   connectToClass = words => {
-    const { classCode } = this.state;
+    const { classCode, ui } = this.state;
     this.socket = new ClusterWS({
       url: 'wss://temp-vocacoord.herokuapp.com/'
     });
     this.socket.on('connect', () => {
-      this.channel = this.socket.subscribe(classCode);
+      this.channel = this.socket.subscribe(classCode.toUpperCase());
       const {
         navigation: { navigate }
       } = this.props;
       if (wentBack) return;
-      navigate('ClassroomScreen', {
+      navigate(ui, {
         channel: this.channel,
         callback: this.isConnected,
         words
       });
     });
-    /*this.socket.on('error', err => {
-      console.error('error: ', err); // <--- commented out because it was throwing an error
-    }); */
-    //this.socket.on('disconnect', () => this.channel.unsubscribe()); <--- commented out because it broke
-  }
+  };
 
   validateCodeLength = () => {
     const { classCode } = this.state;
-    let { errorCode } = this.state;
+    let { error } = this.state;
     let classCodeError = false;
     if (!classCode || classCode.length !== 4) {
       classCodeError = true;
-      errorCode = CODE_LENGTH;
+      error = CODE_LENGTH;
     }
-    this.setState({ classCodeError, errorCode });
+    this.setState({ classCodeError, error });
     return !classCodeError;
   };
 
   render() {
     const { styles } = this.props;
-    const { isConnecting, classCode, classCodeError, errorCode } = this.state;
+    const { isConnecting, classCode, classCodeError, error } = this.state;
     return (
       <View style={styles.container}>
         <View>
@@ -116,7 +108,7 @@ export default class ConnectScreen extends Component {
             autoCapitalize="characters"
           />
           <HelperText type="error" visible={classCodeError}>
-            {errors[errorCode]}
+            {error}
           </HelperText>
           <Divider style={styles.divider} />
           {isConnecting ? (
