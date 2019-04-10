@@ -1,69 +1,36 @@
 {
-  "name": "VocaCoord",
-  "version": "0.1.2",
-  "private": true,
-  "devDependencies": {
-    "babel-preset-react-native-stage-0": "^1.0.1",
-    "husky": "^1.1.3",
-    "jest-react-native": "^18.0.0",
-    "lint-staged": "^8.0.4",
-    "prettier": "^1.15.2",
-    "react-native-dotenv": "^0.2.0",
-    "react-test-renderer": "16.3.1"
-  },
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "react-native start",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "test": "jest",
-    "reload": "adb shell input keyevent 82 && adb shell input keyevent 66 && adb shell input keyevent 66",
-    "devmenu": "adb shell input keyevent 82",
-    "debug": "adb shell input keyevent 82 && adb shell input keyevent 61 && adb shell input keyevent 66 && adb shell input keyevent 66",
-    "release": "cd .\\android\\ && .\\gradlew assembleRelease",
-    "android-release": "react-native run-android --variant=release"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject",
+    "test": "node ./node_modules/jest/bin/jest.js --watchAll"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "jest-expo"
   },
   "dependencies": {
-    "@babel/preset-react": "^7.0.0",
-    "bugsnag-react-native": "^2.12.4",
-    "clusterws-client-js": "^3.0.6",
-    "dot-prop-immutable": "^1.5.0",
-    "eslint": "^5.9.0",
-    "expo-cli": "^2.2.0",
-    "lodash": "^4.17.11",
-    "npm": "^6.4.1",
-    "react": "^16.3.1",
-    "react-native": "^0.55.4",
-    "react-native-animatable": "^1.3.0",
-    "react-native-collapsible": "^1.3.0",
-    "react-native-dialog": "^5.4.0",
-    "react-native-elements": "^0.19.1",
-    "react-native-image-picker": "^0.27.1",
-    "react-native-modal": "^7.0.0",
-    "react-native-paper": "^2.1.2",
-    "react-native-snackbar-component": "^1.1.0",
-    "react-native-swipeout": "^2.3.6",
-    "react-native-vector-icons": "^4.6.0",
-    "react-native-view-more-text": "^2.0.1",
-    "react-native-voice": "^0.2.6",
-    "react-navigation": "^2.17.0",
-    "react-redux": "^5.1.0",
-    "redux": "^4.0.1",
-    "redux-persist": "^5.10.0",
-    "uuid": "^3.3.2",
-    "xdl": "^51.4.0"
+    "@expo/samples": "2.1.1",
+    "accordion-collapse-react-native": "^0.1.9",
+    "clusterws-client-js": "^3.2.0",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-15": "^1.3.1",
+    "enzyme-adapter-react-16": "^1.10.0",
+    "expo": "^32.0.0",
+    "firebase": "^5.8.6",
+    "react": "16.5.0",
+    "react-dom": "^16.8.4",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-collapsible": "^1.4.0",
+    "react-native-elements": "^1.1.0",
+    "react-native-paper": "^2.13.0",
+    "react-navigation": "^3.0.9"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0",
+    "enzyme": "^3.9.0",
+    "jest-expo": "^32.0.0"
   },
-  "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  }
+  "private": true
 }

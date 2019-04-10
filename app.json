@@ -1,4 +1,24 @@
 {
-  "displayName": "VocaCoord",
-  "name": "VocaCoord"
+  "expo": {
+    "name": "VocaCoord",
+    "slug": "VocaCoord",
+    "privacy": "public",
+    "sdkVersion": "32.0.0",
+    "platforms": ["ios", "android"],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/VCLogo.png",
+    "splash": {
+      "image": "./assets/VCLogo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    }
+  }
 }
