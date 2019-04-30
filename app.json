@@ -18,7 +18,11 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "bundleIdentifier": "com.vocacoord.vocacoord",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.vocacoord.vocacoord"
     }
   }
 }
