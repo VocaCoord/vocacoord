@@ -2,10 +2,10 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 
 const config = {
-  apiKey: 'AIzaSyDYFteY5wAzyiXixHyeN0gUq9V97luPiHw',
-  databaseURL: 'https://vocacoord-dev-jerry.firebaseio.com',
-  storageBucket: 'vocacoord-dev-jerry.appspot.com',
-  projectId: 'vocacoord-dev-jerry'
+  apiKey: 'AIzaSyA5Skf8JFsuH_RMC4AA_-xeKjdJKGPfJ0I',
+  databaseURL: 'https://vocacoord.firebaseio.com',
+  projectId: 'vocacoord',
+  storageBucket: 'vocacoord.appspot.com'
 };
 
 (function() {
